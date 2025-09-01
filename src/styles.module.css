@@ -1,22 +1,70 @@
+/* styles.module.css */
+
 .container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+    font-family: Arial, sans-serif;
 }
 
-/* Заголовок */
-.container::before {
-    content: 'Words';
-    display: block;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 700;
+/* Кнопка перемешивания */
+.container > button:first-child {
+    background-color: #4CAF50;
     color: white;
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.container > button:first-child:hover {
+    background-color: #45a049;
+}
+
+/* Форма добавления слов */
+form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+form input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    min-width: 120px;
+}
+
+form input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+form button {
+    background-color: #2196F3;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+form button:hover {
+    background-color: #0b7dda;
+}
+
+/* Сообщение об ошибке */
+.err {
+    color: #f44336;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: block;
 }
 
 /* Список слов */
@@ -24,185 +72,107 @@ ol {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 }
 
+/* Элементы списка */
 .words {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
     transition: all 0.3s ease;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    font-size: 1.5rem;
 }
 
-.words::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.words:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-}
-
-.words:hover::before {
-    opacity: 1;
-}
-
-/* Активное слово */
 .activeWord {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    transform: scale(1.02);
+    border-color: #2196F3;
+    background-color: #e3f2fd;
+    transform: translateX(5px);
 }
 
-.activeWord::before {
-    opacity: 1;
-    background: white;
-}
-
-/* Правильный перевод */
 .correctTranslation {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-    color: white;
-    border: 2px solid #388E3C;
+    border-color: #4CAF50;
+    background-color: #e8f5e8;
 }
 
-.correctTranslation::before {
-    background: #C8E6C9;
-}
-
-/* Неправильный перевод */
 .unCorrectTranslation {
-    background: linear-gradient(135deg, #FF5252 0%, #D32F2F 100%);
-    color: white;
-    border: 2px solid #D32F2F;
+    border-color: #f44336;
+    background-color: #ffebee;
 }
 
-.unCorrectTranslation::before {
-    background: #FFCDD2;
-}
-
-/* Группа ввода */
+/* Группа ввода для выбранного слова */
 .inputGroup {
     display: flex;
-    gap: 0.75rem;
     align-items: center;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255,255,255,0.2);
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #ddd;
 }
 
-/* Поле ввода */
 .inputGroup input {
     flex: 1;
-    padding: 0.75rem 1rem;
-    border: none;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.9);
-    font-size: 1rem;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 .inputGroup input:focus {
     outline: none;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-    transform: scale(1.02);
+    border-color: #2196F3;
 }
 
-.inputGroup input::placeholder {
-    color: #888;
-}
-
-/* Кнопка */
 .inputGroup button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #FF6B6B 0%, #EE5A24 100%);
+    background-color: #4CAF50;
     color: white;
-    font-weight: 600;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(238, 90, 36, 0.3);
+    font-size: 14px;
 }
 
 .inputGroup button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(238, 90, 36, 0.4);
+    background-color: #45a049;
 }
 
-.inputGroup button:active {
-    transform: translateY(0);
-}
-
-/* Иконка глаза */
+/* Иконки */
 .inputGroup img {
     width: 24px;
     height: 24px;
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.2);
-    transition: all 0.3s ease;
-    filter: invert(1);
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
 }
 
 .inputGroup img:hover {
-    background: rgba(255,255,255,0.3);
-    transform: scale(1.1);
+    background-color: #f0f0f0;
 }
 
-.inputGroup img:active {
-    transform: scale(0.95);
+/* Сообщение когда слов нет */
+ol {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 40px 0;
 }
-
-/* Анимации */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+h3{
+    text-align: start;
 }
-
-.words {
-    animation: slideIn 0.3s ease forwards;
-}
-
-.words:nth-child(1) { animation-delay: 0.1s; }
-.words:nth-child(2) { animation-delay: 0.2s; }
-.words:nth-child(3) { animation-delay: 0.3s; }
-.words:nth-child(4) { animation-delay: 0.4s; }
-
 /* Адаптивность */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .container {
-        padding: 1rem;
+        padding: 10px;
     }
     
-    .container::before {
-        font-size: 1.5rem;
+    form {
+        flex-direction: column;
+        align-items: stretch;
     }
     
     .inputGroup {
@@ -211,40 +181,66 @@ ol {
     }
     
     .inputGroup button {
-        order: 3;
-    }
-    
-    .inputGroup img {
-        align-self: center;
+        width: 100%;
     }
 }
 
-/* Темная тема */
-@media (prefers-color-scheme: dark) {
-    .words:not(.activeWord):not(.correctTranslation):not(.unCorrectTranslation) {
-        background: rgba(255,255,255,0.1);
-        color: white;
+/* Анимации */
+.words {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-    
-    .inputGroup input {
-        background: rgba(255,255,255,0.15);
-        color: white;
-    }
-    
-    .inputGroup input::placeholder {
-        color: #ccc;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* Плавные переходы */
-* {
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+/* Стили для состояний слов */
+.words.correctTranslation {
+    animation: correctPulse 0.5s ease;
 }
 
-/* Скроллбар */
+@keyframes correctPulse {
+    0% { background-color: #e8f5e8; }
+    50% { background-color: #c8e6c9; }
+    100% { background-color: #e8f5e8; }
+}
 
+.words.unCorrectTranslation {
+    animation: shake 0.3s ease;
+}
 
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
 
+/* Стили для текста внутри элементов */
+.words {
+    font-size: 18px;
+    font-weight: 500;
+}
 
+.correctTranslation {
+    color: #2e7d32;
+}
 
+.unCorrectTranslation {
+    color: #c62828;
+}
 
+/* Стили для иконок при наведении */
+.inputGroup img[alt="eye"]:hover {
+    background-color: #e3f2fd;
+}
+
+.inputGroup img[alt="remove"]:hover {
+    background-color: #ffebee;
+}
