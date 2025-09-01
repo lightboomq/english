@@ -154,8 +154,8 @@ function App() {
                 Перемешать слова
             </button>
             <form onSubmit={handleForm}>
-                <input autoComplete='off' name="en" type="text" placeholder="en" />
-                <input autoComplete='off' name="ru" type="text" placeholder="ru" />
+                <input autoComplete="off" name="en" type="text" placeholder="en" />
+                <input autoComplete="off" name="ru" type="text" placeholder="ru" />
                 <button type="submit">Добавить</button>
             </form>
             {err && <span className={s.err}>{err}</span>}
@@ -180,30 +180,32 @@ function App() {
                                             placeholder="Введите перевод..."
                                         />
 
-                                        <button onClick={() => handleUserTranslation(selectedWordId)} type="button">
-                                            Далее
-                                        </button>
+                                        <div style={{ display: 'flex' }}>
+                                            <button onClick={() => handleUserTranslation(selectedWordId)} type="button">
+                                                Далее
+                                            </button>
 
-                                        <img
-                                            onMouseDown={() => handleToggleTranslation(word.id, true)}
-                                            onMouseUp={() => handleToggleTranslation(word.id, false)}
-                                            onMouseLeave={() => handleToggleTranslation(word.id, false)}
-                                            draggable="false"
-                                            src={showWord}
-                                            alt="eye"
-                                        />
-                                        <img
-                                            src={removeWord}
-                                            onMouseUp={() => handleRemoveWord(word.id)}
-                                            alt="remove"
-                                        />
+                                            <img
+                                                onMouseDown={() => handleToggleTranslation(word.id, true)}
+                                                onMouseUp={() => handleToggleTranslation(word.id, false)}
+                                                onMouseLeave={() => handleToggleTranslation(word.id, false)}
+                                                draggable="false"
+                                                src={showWord}
+                                                alt="eye"
+                                            />
+                                            <img
+                                                src={removeWord}
+                                                onMouseUp={() => handleRemoveWord(word.id)}
+                                                alt="remove"
+                                            />
+                                        </div>
                                     </div>
                                 )}
                             </li>
                         );
                     })
                 ) : (
-                    <h3 >Слова не добавлены</h3>
+                    <h3>Слова не добавлены</h3>
                 )}
             </ol>
         </div>
