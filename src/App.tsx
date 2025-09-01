@@ -1,5 +1,6 @@
 import React from 'react';
 import showWord from './assets/show.svg';
+import cleanWord from './assets/clean.svg';
 import removeWord from './assets/remove.svg';
 import s from './styles.module.css';
 
@@ -22,12 +23,10 @@ function App() {
         }
     });
 
-    const [selectedWordId, setSelectedWordId] = React.useState<number | null>(
-        words && words.length > 0 ? words[0].id : null
-    );
+    const [selectedWordId, setSelectedWordId] = React.useState<number | null>(null);
     const [input, setInput] = React.useState('');
     const [err, setErr] = React.useState<string>('');
-
+    const inputRefEn = React.useRef<HTMLInputElement>(null);
     React.useEffect(() => {
         const handlerGlobalKeyDown = (e: KeyboardEvent) => {
             const currentIndex = words.findIndex((word) => word.id === selectedWordId);
@@ -72,6 +71,8 @@ function App() {
                 );
                 return [...prev, { id: newId, en: en, ru: ru, isShowTranslation: false }];
             });
+            if (inputRefEn.current) inputRefEn.current.focus();
+
             return e.currentTarget.reset();
         }
         setErr('Проверьте правильность ввода');
@@ -143,18 +144,20 @@ function App() {
             shuffled[i] = shuffled[randomIndex];
             shuffled[randomIndex] = temp;
         }
-        setSelectedWordId(shuffled[0].id);
+        setSelectedWordId(null);
         setWords(shuffled);
         localStorage.setItem('words', JSON.stringify(shuffled));
     };
-
+    const handleCleanWord = (id: number) => {
+        //code
+    };
     return (
         <div className={s.container}>
             <button onClick={shuffleWords} type="button">
                 Перемешать слова
             </button>
             <form onSubmit={handleForm}>
-                <input autoComplete="off" name="en" type="text" placeholder="en" />
+                <input ref={inputRefEn} autoComplete="off" name="en" type="text" placeholder="en" />
                 <input autoComplete="off" name="ru" type="text" placeholder="ru" />
                 <button type="submit">Добавить</button>
             </form>
@@ -191,11 +194,21 @@ function App() {
                                                 onMouseLeave={() => handleToggleTranslation(word.id, false)}
                                                 draggable="false"
                                                 src={showWord}
+                                                title="Показать перевод"
                                                 alt="eye"
                                             />
+                                            {/* <img
+                                                draggable="false"
+                                                onClick={handleCleanWord}
+                                                src={cleanWord}
+                                                title="Очистить"
+                                                alt="clean"
+                                            /> */}
                                             <img
+                                                draggable="false"
                                                 src={removeWord}
                                                 onMouseUp={() => handleRemoveWord(word.id)}
+                                                title="Удалить"
                                                 alt="remove"
                                             />
                                         </div>
