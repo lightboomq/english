@@ -1,4 +1,6 @@
 import React from 'react';
+import { API } from '../API';
+import { useNavigate } from 'react-router-dom';
 import { Modal_window } from './06_Modal_window';
 import { Notification } from './07_Notification';
 import favorite_word_png from '../assets/favorite_word.png';
@@ -11,7 +13,7 @@ import remove_word_png from '../assets/remove_word.png';
 import s from '../styles/04_words.module.css';
 
 interface Words {
-    id: number;
+    _id: number;
     en: string;
     ru: string;
     is_show_translation: boolean;
@@ -20,12 +22,7 @@ interface Words {
 }
 
 export const Words = () => {
-    const [words, set_words] = React.useState<Words[]>([
-        { id: 1, en: 'catch', ru: 'ловить', is_show_translation: false },
-        { id: 2, en: 'go', ru: 'идти', is_show_translation: false },
-        { id: 3, en: 'dog', ru: 'собака', is_show_translation: false },
-    ]);
-
+    const [words, set_words] = React.useState<Words[]>([]);
     const [is_open_modal, set_is_open_modal] = React.useState<boolean>(false);
     const [is_open_notification, set_is_open_notification] = React.useState<boolean>(false);
     const [selected_word_id, set_selected_word_id] = React.useState<number | null>(null);
@@ -38,6 +35,13 @@ export const Words = () => {
     const [err, set_err] = React.useState<string>('');
     const input_ref_en = React.useRef<HTMLInputElement>(null);
     const input_ref_translation = React.useRef<HTMLInputElement>(null);
+
+    const navigate = useNavigate();
+    React.useEffect(() => {
+        API.get_all_words()
+            .then((res) => set_words(res))
+            .catch((err) => (err.message === 'UNAUTHORIZED' ? navigate('/auth') : console.log(err)));
+    }, []);
 
     React.useEffect(() => {
         if (words.length > 0) {
@@ -115,15 +119,15 @@ export const Words = () => {
 
     React.useEffect(() => {
         const handler_global_key_down = (e: KeyboardEvent) => {
-            const current_index = words.findIndex((word) => word.id === selected_word_id);
+            const current_index = words.findIndex((word) => word._id === selected_word_id);
 
             if (e.key === 'ArrowUp') {
                 const prev_index = (current_index - 1 + words.length) % words.length;
-                set_selected_word_id(words[prev_index].id);
+                set_selected_word_id(words[prev_index]._id);
             }
             if (e.key === 'ArrowDown') {
                 const next_index = (current_index + 1) % words.length;
-                set_selected_word_id(words[next_index].id);
+                set_selected_word_id(words[next_index]._id);
             }
         };
 
@@ -138,30 +142,41 @@ export const Words = () => {
         input_ref_translation.current?.focus();
     }, [selected_word_id]); //смена фокуса на следущее слово , нажатие enter или лкм на send
 
-    const add_word = (e: React.FormEvent<HTMLFormElement>) => {
+    const add_word = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        try {
+            const form_data = new FormData(e.currentTarget);
 
-        const form_data = new FormData(e.currentTarget);
+            const en = form_data.get('en') as string;
+            const ru = form_data.get('ru') as string;
 
-        const en = form_data.get('en') as string;
-        const ru = form_data.get('ru') as string;
+            if (!en.trim() || !ru.trim()) return set_err('Заполните оба поля');
 
-        if (!en.trim() || !ru.trim()) return set_err('Заполните оба поля');
+            const is_valid_en = /^[A-Za-z\s]+$/.test(en);
+            const is_valid_ru = /^[А-Яа-яЁё\s]+$/.test(ru);
 
-        const is_valid_en = /^[A-Za-z\s]+$/.test(en);
-        const is_valid_ru = /^[А-Яа-яЁё\s]+$/.test(ru);
-
-        if (is_valid_en && is_valid_ru) {
-            const newId: number = Math.max(...words.map((w) => w.id), 0) + 1;
-
-            set_words((prev) => {
-                return [...prev, { id: newId, en: en, ru: ru, is_show_translation: false }];
+            if (!is_valid_en && !is_valid_ru) return;
+            const res = await fetch('http://localhost:3005/words', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    en,
+                    ru,
+                    is_correct_translation: false,
+                    is_show_translation: false,
+                }),
             });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+
+            set_words((prev) => [...prev, data]);
             if (input_ref_en.current) input_ref_en.current.focus();
-            set_err('');
-            return e.currentTarget.reset();
-        }
-        set_err('Проверьте правильность ввода');
+            e.currentTarget.reset();
+            return set_err('');
+        } catch (error) {}
     };
 
     const render_word = (word: Words) => {
@@ -171,13 +186,13 @@ export const Words = () => {
     };
 
     const show_translation = (id: number) => {
-        set_words((prev) => prev.map((word) => (word.id === id ? { ...word, is_show_translation: !word.is_show_translation } : word)));
+        set_words((prev) => prev.map((word) => (word._id === id ? { ...word, is_show_translation: !word.is_show_translation } : word)));
     };
 
     const remove_word = (id: number) => {
         const stored = [...words];
         if (!stored) return;
-        const filteredWords = stored.filter((word) => word.id !== id);
+        const filteredWords = stored.filter((word) => word._id !== id);
         set_words(filteredWords);
     };
 
@@ -198,7 +213,7 @@ export const Words = () => {
     const reset_word = (id: number) => {
         set_words((prev) =>
             prev.map((word) => {
-                if (word.id === id) {
+                if (word._id === id) {
                     const { is_correct_translation, ...rest } = word; // rest оператор
                     return {
                         ...rest, //spread оператор
@@ -227,7 +242,7 @@ export const Words = () => {
     const give_translation = (e: React.FormEvent, id: number) => {
         e.preventDefault();
         const clone_words = [...words];
-        const current_index = clone_words.findIndex((word) => word.id === id);
+        const current_index = clone_words.findIndex((word) => word._id === id);
         const current_word = clone_words[current_index].ru.toLowerCase();
         const is_correct = current_word === input.toLowerCase().trim();
 
@@ -244,7 +259,7 @@ export const Words = () => {
         if (next_index === clone_words.length - 1 && clone_words[next_index].user_response !== undefined) {
             set_selected_word_id(null);
         } else {
-            set_selected_word_id(clone_words[next_index].id);
+            set_selected_word_id(clone_words[next_index]._id);
         }
         set_words(clone_words);
         set_input('');
@@ -291,7 +306,7 @@ export const Words = () => {
                 </button>
             </form>
             {err && <span className={s.err}>{err}</span>}
-            {words.length > 1 && (
+            {words.length >= 1 && (
                 <div className={s.wrapper_test}>
                     <input
                         className={s.input_filtering}
@@ -306,17 +321,19 @@ export const Words = () => {
                     </button>
                 </div>
             )}
+
             {input_search && <p className={s.search_counter}>Найдено: {words_filter.length}</p>}
+
             <ol className={s.wrapper_words} onClick={select_word}>
                 {words.length === 0 ? (
                     <p>Словарь пуст. Добавьте слово</p>
                 ) : (
                     words_filter.map((word) => {
                         return (
-                            <li className={word.id === selected_word_id ? `${s.wrapper_word} ${s.active_word}` : s.wrapper_word} key={word.id} data-id={word.id}>
+                            <li className={word._id === selected_word_id ? `${s.wrapper_word} ${s.active_word}` : s.wrapper_word} key={word._id} data-id={word._id}>
                                 <span className={highlight_word(word.is_correct_translation)}>{render_word(word)}</span>
 
-                                {word.id === selected_word_id && (
+                                {word._id === selected_word_id && (
                                     <>
                                         {!word.is_correct_translation && (
                                             <form className={s.wrapper_input_translation} onSubmit={(e) => give_translation(e, selected_word_id)}>
@@ -337,7 +354,7 @@ export const Words = () => {
                                             <img className={s.favorite} onClick={add_word_favorite} src={favorite_word_png} title='Избранное' alt='favorite' />
                                             <img
                                                 className={word.is_correct_translation ? `${s.word_action} ${s.disabled}` : s.word_action}
-                                                onClick={() => show_translation(word.id)}
+                                                onClick={() => show_translation(word._id)}
                                                 draggable='false'
                                                 src={word.is_show_translation ? hidden_translate_png : show_translate_png}
                                                 title='Показать перевод'
@@ -346,14 +363,14 @@ export const Words = () => {
                                             <img
                                                 className={s.word_action}
                                                 draggable='false'
-                                                onClick={() => reset_word(word.id)}
+                                                onClick={() => reset_word(word._id)}
                                                 src={reset_word_png}
                                                 title='Сбросить'
                                                 alt='reset'
                                             />
                                             <img
                                                 className={s.word_action}
-                                                onClick={() => remove_word(word.id)}
+                                                onClick={() => remove_word(word._id)}
                                                 draggable='false'
                                                 src={remove_word_png}
                                                 title='Удалить'

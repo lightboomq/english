@@ -161,7 +161,7 @@ export const Registration = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/registration', {
+            const res = await fetch('http://localhost:3005/registration', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ export const Registration = () => {
                 const error_data = await res.json();
                 throw new Error(error_data.message || 'Произошла ошибка при регистрации');
             }
-            navigate('/words');
+            navigate('/auth');
         } catch (err: any) {
             set_err(err.message);
         }

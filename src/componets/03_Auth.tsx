@@ -11,7 +11,7 @@ export const Auth = () => {
     const navigate = useNavigate();
     const sign_in = async () => {
         try {
-            const res = await fetch('http://localhost:3000/auth', {
+            const res = await fetch('http://localhost:3005/auth', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -20,12 +20,13 @@ export const Auth = () => {
                     login,
                     password,
                 }),
+                credentials: 'include', //автоматически прикрепляет куку с бекенда к браузеру клиента
             });
+
             if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.message || 'Произошла ошибка при регистрации');
+                //err
             }
-            // !navigate('/words');
+            navigate('/words');
         } catch (err: any) {
             set_err(err.message);
         }
