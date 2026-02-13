@@ -162,7 +162,7 @@ export const Registration = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:3005/registration', {
+            const res = await fetch('https://server-words.onrender.com/registration', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

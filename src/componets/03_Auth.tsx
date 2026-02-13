@@ -11,7 +11,7 @@ export const Auth = () => {
     const navigate = useNavigate();
     const sign_in = async () => {
         try {
-            const res = await fetch('http://localhost:3005/auth', {
+            const res = await fetch('https://server-words.onrender.com/auth', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

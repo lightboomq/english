@@ -19,20 +19,20 @@ const request = async (url: string, options: RequestInit = {}) => {
 export const API = {
     // Получение всех слов
     get_all_words: () => {
-        return request('http://localhost:3005/words', {
+        return request('https://server-words.onrender.com/words', {
             method: 'GET',
         });
     },
 
     // Добавление слова
     add_word: (word: { en: string; ru: string }) => {
-        return request('http://localhost:3005/words', {
+        return request('https://server-words.onrender.com/words', {
             method: 'POST',
             body: JSON.stringify(word),
         });
     },
     give_translation: (id: string, is_correct: boolean) => {
-        return request(`http://localhost:3005/words/${id}`, {
+        return request(`https://server-words.onrender.com/words/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({
                 is_correct,
@@ -42,7 +42,7 @@ export const API = {
 
     //Сбросить перевод слова
     reset_word: (id: string) => {
-        return request(`http://localhost:3005/words/${id}`, {
+        return request(`https://server-words.onrender.com/words/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({
                 is_correct_translation: null,
@@ -52,26 +52,26 @@ export const API = {
 
     //Удаление слова по id
     remove_word: (id: string) => {
-        return request(`http://localhost:3005/words/${id}`, {
+        return request(`https://server-words.onrender.com/words/${id}`, {
             method: 'DELETE',
         });
     },
 
     // Удаление всех слов
     remove_all_words: () => {
-        return request('http://localhost:3005/words', {
+        return request('https://server-words.onrender.com/words', {
             method: 'DELETE',
         });
     },
     // Перемешать все слова
     mix_all_words: () => {
-        return request('http://localhost:3005/settings', {
+        return request('https://server-words.onrender.com/settings', {
             method: 'GET',
         });
     },
 
     settings: (is_mix_words: boolean) => {
-        return request('http://localhost:3005/settings', {
+        return request('https://server-words.onrender.com/settings', {
             method: 'PATCH',
             body: JSON.stringify({
                 is_mix_words,
