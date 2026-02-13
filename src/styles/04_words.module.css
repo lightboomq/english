@@ -14,12 +14,13 @@
     justify-content: space-between;
     align-items: center;
 }
-.remove_all_words {
-    align-self: flex-end;
-    color: #64748b;
-    font-size: 14px;
-    text-decoration: underline;
+.settings {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    margin-left: auto;
 }
+
 .favorite_word {
     width: 40px;
     height: 40px;
@@ -112,8 +113,7 @@
     border-color: #6366f1; /* Индиго */
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
-.input_translation::placeholder {
-}
+
 .send_btn {
     width: 43px;
     height: 43px;

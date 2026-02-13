@@ -1,18 +1,81 @@
+const request = async (url: string, options: RequestInit = {}) => {
+    const res = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        ...options, // Здесь будет method и body
+        credentials: 'include', // Обязательно для работы с куками
+    });
+
+    if (res.status === 401) throw new Error('UNAUTHORIZED');
+    if (res.status === 204) return null;
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || 'Ошибка сервера');
+
+    return data;
+};
+
 export const API = {
-    async get_all_words() {
-        const res = await fetch('http://localhost:3005/words', {
-            credentials: 'include',
+    // Получение всех слов
+    get_all_words: () => {
+        return request('http://localhost:3005/words', {
+            method: 'GET',
         });
+    },
 
-        if (res.status === 401) {
-            throw new Error('UNAUTHORIZED');
-        }
+    // Добавление слова
+    add_word: (word: { en: string; ru: string }) => {
+        return request('http://localhost:3005/words', {
+            method: 'POST',
+            body: JSON.stringify(word),
+        });
+    },
+    give_translation: (id: string, is_correct: boolean) => {
+        return request(`http://localhost:3005/words/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                is_correct,
+            }),
+        });
+    },
 
-        if (!res.ok) {
-            const data = await res.json();
-            throw new Error(data.message);
-        }
+    //Сбросить перевод слова
+    reset_word: (id: string) => {
+        return request(`http://localhost:3005/words/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                is_correct_translation: null,
+            }),
+        });
+    },
 
-        return res.json();
+    //Удаление слова по id
+    remove_word: (id: string) => {
+        return request(`http://localhost:3005/words/${id}`, {
+            method: 'DELETE',
+        });
+    },
+
+    // Удаление всех слов
+    remove_all_words: () => {
+        return request('http://localhost:3005/words', {
+            method: 'DELETE',
+        });
+    },
+    // Перемешать все слова
+    mix_all_words: () => {
+        return request('http://localhost:3005/settings', {
+            method: 'GET',
+        });
+    },
+
+    settings: (is_mix_words: boolean) => {
+        return request('http://localhost:3005/settings', {
+            method: 'PATCH',
+            body: JSON.stringify({
+                is_mix_words,
+            }),
+        });
     },
 };

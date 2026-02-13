@@ -154,6 +154,7 @@ export const Registration = () => {
         }
 
         const obj = {};
+
         for (let i = 0; i < fields.length; i++) {
             const key = fields[i].title.trim();
             const value = fields[i].value.trim();
