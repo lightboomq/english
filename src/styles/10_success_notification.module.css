@@ -1,0 +1,53 @@
+.wrapper {
+    display: flex;
+    padding: 7px;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(34, 192, 34);
+    top: -45px;
+    border-radius: 10px;
+    animation: wrapper ease-in-out 0.3s forwards;
+    z-index: 100;
+    color: white;
+}
+.text {
+    font-size: 16px;
+}
+.close {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+.line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    animation: line ease-out 2s forwards;
+}
+
+@keyframes wrapper {
+    from {
+        transform: translateX(-50%);
+        top: -45px;
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%);
+        top: 10px;
+        opacity: 1;
+    }
+}
+@keyframes line {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}

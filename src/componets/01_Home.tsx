@@ -1,6 +1,6 @@
 import s from '../styles/01_Home.module.css';
 import { Link } from 'react-router-dom';
-
+import Errors from './05_Error_notification';
 export const Home = () => {
     return (
         <div className={s.wrapper}>

@@ -42,6 +42,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
+    gap: 10px;
 }
 .message {
     margin-left: 10px;
@@ -55,5 +56,11 @@
     border: 1px solid red;
 }
 .err {
+    text-align: center;
     color: red;
+    font-size: 15px;
+}
+.btns {
+    color: #551a8b; /* Синий цвет как у ссылок */
+    text-decoration: underline; /* Подчеркивание */
 }

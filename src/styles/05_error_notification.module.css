@@ -1,17 +1,39 @@
 .wrapper {
-    position: fixed;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: rgb(240, 240, 240);
     bottom: -45px;
-    right: 10px;
-    padding: 10px;
+    /* right: 10px; */
     border-radius: 10px;
     animation: wrapper ease-in-out 0.3s forwards;
     z-index: 100;
+    gap: 5px;
+    text-align: center;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: brown;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 4px;
+    font-size: 1px;
+}
+.icon {
+    font-size: 17px;
+}
+.test {
+    display: flex;
+    gap: 5px;
 }
 .textErr {
-    margin-left: 10px;
+    padding: 7px;
+    font-size: 16px;
 }
 .line {
     position: absolute;
@@ -29,10 +51,12 @@
 }
 @keyframes wrapper {
     from {
+        transform: translateX(-50%);
         bottom: -45px;
         opacity: 0;
     }
     to {
+        transform: translateX(-50%);
         bottom: 10px;
         opacity: 1;
     }

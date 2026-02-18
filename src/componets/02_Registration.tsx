@@ -1,10 +1,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API } from '../API';
+import Success_message from '../store/Success_message';
+import Errors_message from '../store/Errors_message';
+import Loader from './09_Loader';
 import visible_password_svg from '../assets/visible_password.svg';
 import invisible_password_svg from '../assets/invisible_password.svg';
 import valid_png from '../assets/valid.png';
 import invalid_png from '../assets/invalid.png';
 import s from '../styles/02_registration.module.css';
+import { LogIn } from 'lucide-react';
 
 // Для onChange: React.ChangeEvent<HTMLInputElement>
 // Для onBlur: React.FocusEvent<HTMLInputElement>
@@ -86,6 +91,7 @@ export const Registration = () => {
     ]);
     const [err, set_err] = React.useState('');
     const [index_field, set_index_field] = React.useState<null | number>(null);
+    const [is_loading, set_is_loading] = React.useState(false);
     const navigate = useNavigate();
 
     const handle_input = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
@@ -162,21 +168,14 @@ export const Registration = () => {
         }
 
         try {
-            const res = await fetch('https://server-words.onrender.com/registration', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(obj),
-            });
-
-            if (!res.ok) {
-                const error_data = await res.json();
-                throw new Error(error_data.message || 'Произошла ошибка при регистрации');
-            }
+            set_is_loading(true);
+            await API.get_registration(obj);
+            Success_message.set_is_show(true);
             navigate('/auth');
         } catch (err: any) {
-            set_err(err.message);
+            Errors_message.set_message(err.message);
+        } finally {
+            set_is_loading(false);
         }
     };
 
@@ -213,14 +212,15 @@ export const Registration = () => {
                     );
                 })}
                 <div className={s.wrapper_btns}>
+                    {err && <p className={s.err}>{err}</p>}
                     <button className={s.btns} type='submit'>
                         Зарегистрироваться
+                        {is_loading && <Loader />}
                     </button>
                     <Link className={s.btns} to='/auth'>
                         Уже есть аккаунт?
                     </Link>
                 </div>
-                {err && <p className={s.err}>{err}</p>}
             </div>
 
             <div className={s.column_right}>
