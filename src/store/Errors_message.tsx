@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 
 class Errors_message {
-    message: string = 'Неверный логин или пароль';
+    message: string = '';
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true });
     }

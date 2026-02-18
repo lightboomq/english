@@ -13,16 +13,6 @@ export const Layout = observer(() => {
     const [is_loading, set_is_loading] = React.useState<boolean>(true);
 
     // Настройки пользователя
-    React.useEffect(() => {
-        API.mix_all_words()
-            .then((res) => {
-                User_settings.set_is_mix_words(res);
-            })
-            .catch((err) => console.log(err))
-            .finally(() => {
-                set_is_loading(false);
-            });
-    }, []);
 
     // if (is_loading) {
     //     return <div>Загрузка настроек...</div>;
@@ -33,7 +23,6 @@ export const Layout = observer(() => {
             {Success_message.get_is_show() && <Success_notification />}
             <Outlet />
             {Errors_message.get_message() && <Error_notification />}
-            <Error_notification />
         </main>
     );
 });

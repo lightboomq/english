@@ -1,6 +1,6 @@
 import s from '../styles/01_Home.module.css';
 import { Link } from 'react-router-dom';
-import Errors from './05_Error_notification';
+
 export const Home = () => {
     return (
         <div className={s.wrapper}>
@@ -10,7 +10,7 @@ export const Home = () => {
                     <h3>Свой словарь</h3>
                     <p>Добавляйте только те слова, которые вам действительно нужны. Метод интервальных повторений поможет запомнить всё.</p>
 
-                    <Link to='/words' className={s.btn_start}>
+                    <Link to='/registration' className={s.btn_start}>
                         Начать обучение
                     </Link>
                 </div>

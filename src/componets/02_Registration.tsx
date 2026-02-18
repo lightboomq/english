@@ -9,7 +9,6 @@ import invisible_password_svg from '../assets/invisible_password.svg';
 import valid_png from '../assets/valid.png';
 import invalid_png from '../assets/invalid.png';
 import s from '../styles/02_registration.module.css';
-import { LogIn } from 'lucide-react';
 
 // Для onChange: React.ChangeEvent<HTMLInputElement>
 // Для onBlur: React.FocusEvent<HTMLInputElement>
@@ -41,16 +40,16 @@ export const Registration = () => {
             is_has_err: false,
             rules: [
                 {
-                    message: 'Минимум 3, максимум 12 символов.',
-                    regexp: /^.{3,12}$/,
+                    message: 'От 3 до 12 символов. Допустимы латинские буквы|цифры|нижнее подчеркивание. ',
+                    regexp: /^[a-zA-Z0-9_]{3,12}$/,
                     is_valid: false,
                 },
 
-                {
-                    message: 'Используйте латиницу (цифры и спецсимволы по желанию).',
-                    regexp: /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>_]+$/,
-                    is_valid: false,
-                },
+                // {
+                //     message: 'Используйте латиницу (цифры и спецсимволы по желанию).',
+                //     regexp: /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>_]+$/,
+                //     is_valid: false,
+                // },
             ],
         },
 
@@ -62,8 +61,8 @@ export const Registration = () => {
             is_has_err: false,
             rules: [
                 {
-                    message: 'Неверный формат email. Используйте латинские буквы  | цифры | точки  | @ | домен',
-                    regexp: /^([0-9A-Za-z]{1}[-0-9A-Za-z\.]{1,}[0-9A-Za-z]{1}@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/,
+                    message: 'Введите корректный адрес электронной почты (например, example@mail.com)',
+                    regexp: /^([0-9A-Za-z]{1}[-0-9A-Za-z\._]{1,}[0-9A-Za-z]{1}@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/,
                     is_valid: false,
                 },
             ],
@@ -77,15 +76,15 @@ export const Registration = () => {
             is_has_err: false,
             rules: [
                 {
-                    message: 'Минимум 8, максимум 14 символов.',
-                    regexp: /^.{8,14}$/,
+                    message: 'От 6 до 16 символов. Запрещены русские буквы и пробелы. Можно использовать любые другие символы и спецсимволы',
+                    regexp: /^[^\sа-яА-ЯёЁ]{6,16}$/,
                     is_valid: false,
                 },
-                {
-                    message: 'Латиница или цифры и хотя бы 1 спецсимвол(!@#$%^&*(),.?":{}|<>_)',
-                    regexp: /^(?=.*[A-Za-z0-9])(?=.*[!@#$%^&*(),.?":{}|<>_])[A-Za-z0-9!@#$%^&*(),.?":{}|<>_]+$/,
-                    is_valid: false,
-                },
+                // {
+                //     message: 'Латиница или цифры и хотя бы 1 спецсимвол(!@#$%^&*(),.?":{}|<>_)',
+                //     regexp: /^(?=.*[A-Za-z0-9])(?=.*[!@#$%^&*(),.?":{}|<>_])[A-Za-z0-9!@#$%^&*(),.?":{}|<>_]+$/,
+                //     is_valid: false,
+                // },
             ],
         },
     ]);
@@ -147,6 +146,7 @@ export const Registration = () => {
             return 'password';
         }
     };
+
     const send_data = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
