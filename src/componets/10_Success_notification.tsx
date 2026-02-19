@@ -9,7 +9,7 @@ const Error_notification = () => {
     React.useEffect(() => {
         const timer_id = setTimeout(() => {
             Succes_message.set_is_show(false);
-        }, 2000);
+        }, 1500);
 
         return () => {
             clearTimeout(timer_id);
@@ -21,8 +21,7 @@ const Error_notification = () => {
             <img src={successfully_png} width={25} height={25} alt='err' />
             <p className={s.text}>Успешно!</p>
 
-            <img onClick={() => Succes_message.set_is_show(false)} src={close_success} className={s.close} alt='close' />
-
+            {/* <img onClick={() => Succes_message.set_is_show(false)} src={close_success} className={s.close} alt='close' /> */}
             <div className={s.line}> </div>
         </div>
     );

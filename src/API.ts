@@ -10,7 +10,19 @@ const request = async (url: string, options: RequestInit = {}) => {
     });
     const data = await res.json();
 
-    if (!res.ok) throw new Error(data.message || 'Ошибка сервера');
+    if (!res.ok) {
+        if (res.status === 401 || res.status === 404) {
+            //Выкидывает с системы
+            //401 статус с бекенда только на истекший токен
+            //404 статус с бекенда только на юзер не найден
+            const text = res.status === 401 ? 'Сессия завершена, авторизуйтесь снова.' : 'Пользователь не найден или аккаунт удален';
+            sessionStorage.setItem('auth_error', text);
+            window.location.replace('/auth');
+            return;
+        }
+
+        throw new Error(data.message || 'Ошибка сервера');
+    }
 
     return data;
 };
@@ -75,13 +87,13 @@ export const API = {
         });
     },
     // Перемешать все слова
-    mix_all_words: () => {
+    get_settings: () => {
         return request(`${API_URL}/settings`, {
             method: 'GET',
         });
     },
 
-    settings: (is_mix_words: boolean) => {
+    set_settings: (is_mix_words: boolean) => {
         return request(`${API_URL}/settings`, {
             method: 'PATCH',
             body: JSON.stringify({

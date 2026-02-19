@@ -1,48 +1,52 @@
 .wrapper {
     display: flex;
-    padding: 7px;
+    padding: 10px;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgb(34, 192, 34);
-    top: -45px;
-    border-radius: 10px;
-    animation: wrapper ease-in-out 0.3s forwards;
+
+    background-color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    top: -60px;
+    border-radius: 12px;
+    animation: wrapper ease-in-out 0.4s forwards;
     z-index: 100;
-    color: white;
+    color: #2c3e50;
+    border: 1px solid #d4edda;
+    overflow: hidden;
 }
+
 .text {
-    font-size: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    flex-grow: 1;
 }
-.close {
-    width: 15px;
-    height: 15px;
-    cursor: pointer;
-}
+
 .line {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 2px;
-    background-color: white;
-    animation: line ease-out 2s forwards;
+    height: 3px;
+    background-color: #2ecc71;
+    animation: line linear 1.5s forwards; /* linear лучше подходит для прогресс-бара */
 }
 
 @keyframes wrapper {
     from {
         transform: translateX(-50%);
-        top: -45px;
+        top: -60px;
         opacity: 0;
     }
     to {
         transform: translateX(-50%);
-        top: 10px;
+        top: 20px;
         opacity: 1;
     }
 }
+
 @keyframes line {
     from {
         width: 100%;

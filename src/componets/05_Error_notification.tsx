@@ -9,7 +9,7 @@ const Error_notification = () => {
     React.useEffect(() => {
         const timer_id = setTimeout(() => {
             Error_messages.set_message('');
-        }, 210000);
+        }, 10000);
 
         return () => {
             clearTimeout(timer_id);

@@ -2,10 +2,10 @@
     display: grid;
     align-items: start;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
     padding: 15px;
     max-width: 800px;
     margin: 0 auto;
+    gap: 20px;
 }
 
 .column_left {
@@ -63,4 +63,10 @@
 .btns {
     color: #551a8b; /* Синий цвет как у ссылок */
     text-decoration: underline; /* Подчеркивание */
+}
+@media (max-width: 700px) {
+    .wrapper_form {
+        grid-template-columns: 1fr;
+        max-width: 350px;
+    }
 }

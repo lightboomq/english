@@ -1,14 +1,17 @@
-form {
+.wrapper_form {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    max-width: 360px;
+    border: 1px solid black;
+    padding: 15px;
+    border-radius: 10px;
+    margin: auto;
+    gap: 15px;
+}
+.title {
+    text-align: center;
 }
 
-.wrapperInput {
-    display: flex;
-    flex-direction: column;
-    max-width: 300px;
-}
 .sign_btn {
     color: #551a8b; /* Синий цвет как у ссылок */
     text-decoration: underline; /* Подчеркивание */
@@ -20,9 +23,17 @@ input {
     padding-left: 5px;
     width: 100%;
 }
+.wrapper_btns {
+    display: flex;
+    flex-direction: column;
+}
 button {
     margin-top: 5px;
     cursor: pointer;
+}
+.link {
+    text-align: center;
+    margin-top: 10px;
 }
 .err {
     font-size: 16px;

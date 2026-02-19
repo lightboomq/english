@@ -12,6 +12,7 @@ import show_translate_png from '../assets/show_translate_word.png';
 import hidden_translate_png from '../assets/hidden_translate_word.png';
 import reset_word_png from '../assets/reset_word.png';
 import remove_word_png from '../assets/remove_word.png';
+import Errors_message from '../store/Errors_message';
 import s from '../styles/04_words.module.css';
 
 interface Words {
@@ -38,15 +39,26 @@ export const Words = observer(() => {
     const [err, set_err] = React.useState<string>('');
     const input_ref_en = React.useRef<HTMLInputElement>(null);
     const input_ref_translation = React.useRef<HTMLInputElement>(null);
-
+    const [is_loading, set_is_loading] = React.useState<boolean>(false);
     const navigate = useNavigate();
+
     React.useEffect(() => {
-        API.get_all_words()
-            .then((res) => {
-                if (User_settings.is_mix_words) return mix_words(res); //перемешивание слов
-                set_words(res);
-            })
-            .catch((err) => (err.message === 'UNAUTHORIZED' ? navigate('/auth') : console.log(err)));
+        const get_all_words = async () => {
+            try {
+                set_is_loading(true);
+                const [settings, res] = await Promise.all([API.get_settings(), API.get_all_words()]);
+                if (settings.is_mix_words) {
+                    mix_words(res);
+                } else {
+                    set_words(res);
+                }
+            } catch (err: any) {
+                Errors_message.set_message(err.message);
+            } finally {
+                set_is_loading(false);
+            }
+        };
+        get_all_words();
     }, []);
 
     const mix_words = (arr: Words[]) => {

@@ -90,7 +90,7 @@ export const Registration = () => {
     ]);
     const [err, set_err] = React.useState('');
     const [index_field, set_index_field] = React.useState<null | number>(null);
-    const [is_loading, set_is_loading] = React.useState(false);
+    const [is_loading, set_is_loading] = React.useState<boolean>(false);
     const navigate = useNavigate();
 
     const handle_input = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
