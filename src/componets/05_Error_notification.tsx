@@ -1,5 +1,5 @@
 import React from 'react';
-import errorIcon from '../assets/errorIcon.svg';
+import err_icon from '../assets/errorIcon.svg';
 import close_err from '../assets/close_success.svg';
 import Error_messages from '../store/Errors_message';
 import { observer } from 'mobx-react-lite';
@@ -19,14 +19,13 @@ const Error_notification = () => {
     return (
         <div className={s.wrapper}>
             <div className={s.header}>
-                <div className={s.test}>
-                    <img src={errorIcon} alt='err' />
-                    <p className={s.icon}>Ошибка</p>
-                </div>
-                <img onClick={() => Error_messages.set_message('')} src={close_err} className={s.closeError} alt='close' />
+                <img src={err_icon} className={s.err_icon} width={20} height={20} alt='err_icon' />
+                <p className={s.title}>Ошибка</p>
+                <img onClick={() => Error_messages.set_message('')} src={close_err} className={s.close_err} alt='close_err' />
             </div>
 
-            <p className={s.textErr}>{Error_messages.get_message()}</p>
+            <p className={s.text}>{Error_messages.get_message()}</p>
+
             <div className={s.line}> </div>
         </div>
     );

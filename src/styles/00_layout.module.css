@@ -6,7 +6,7 @@
     font-family: 'Geist', sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
-    scrollbar-gutter: stable;
+    /* scrollbar-gutter: stable; */
 }
 
 .wrapper {

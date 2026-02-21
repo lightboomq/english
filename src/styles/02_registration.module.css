@@ -1,14 +1,21 @@
 .wrapper_form {
     display: grid;
     align-items: start;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     padding: 15px;
-    max-width: 800px;
-    margin: 0 auto;
-    gap: 20px;
+    max-width: 350px;
+    margin: auto;
+    gap: 10px;
 }
-
-.column_left {
+.column_top {
+    min-height: 85px;
+    padding: 7px 0 0 7px;
+    border-left: 1px solid #eee;
+}
+.message {
+    font-size: 14px;
+}
+.column_bottom {
     display: flex;
     flex-direction: column;
     border: 1px solid black;
@@ -21,8 +28,11 @@
 }
 .wrapper_input {
     display: flex;
+    flex-direction: column;
     position: relative;
-    align-items: center;
+}
+.label_title {
+    cursor: text;
 }
 .eye {
     position: absolute;
@@ -33,10 +43,7 @@
     cursor: pointer;
     z-index: 10;
 }
-.column_right {
-    padding: 10px 0 0 20px;
-    border-left: 1px solid #eee;
-}
+
 .wrapper_btns {
     display: flex;
     flex-direction: column;
@@ -44,11 +51,7 @@
     margin-top: 10px;
     gap: 10px;
 }
-.message {
-    margin-left: 10px;
-    font-size: 14px;
-    word-break: break-word;
-}
+
 .input_unerr {
     border: 1px solid black;
 }
@@ -61,12 +64,6 @@
     font-size: 15px;
 }
 .btns {
-    color: #551a8b; /* Синий цвет как у ссылок */
-    text-decoration: underline; /* Подчеркивание */
-}
-@media (max-width: 700px) {
-    .wrapper_form {
-        grid-template-columns: 1fr;
-        max-width: 350px;
-    }
+    color: #551a8b;
+    text-decoration: underline;
 }

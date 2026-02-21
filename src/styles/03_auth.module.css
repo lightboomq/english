@@ -1,11 +1,12 @@
 .wrapper_form {
     display: flex;
     flex-direction: column;
-    max-width: 360px;
+    max-width: 320px;
     border: 1px solid black;
     padding: 15px;
     border-radius: 10px;
     margin: auto;
+    margin-top: 110px;
     gap: 15px;
 }
 .title {

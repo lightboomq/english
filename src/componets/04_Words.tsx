@@ -1,6 +1,7 @@
 import React from 'react';
 import User_settings from '../store/User_settings';
 import { API } from '../API';
+import Loader from './09_Loader';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import settings_svg from '../assets/settings.svg';
@@ -13,7 +14,9 @@ import hidden_translate_png from '../assets/hidden_translate_word.png';
 import reset_word_png from '../assets/reset_word.png';
 import remove_word_png from '../assets/remove_word.png';
 import Errors_message from '../store/Errors_message';
+import 'react-loading-skeleton/dist/skeleton.css';
 import s from '../styles/04_words.module.css';
+import Skeleton from 'react-loading-skeleton';
 
 interface Words {
     _id: string;
@@ -206,10 +209,13 @@ export const Words = observer(() => {
         set_words((prev) => prev.map((word) => (word._id === id ? { ...word, is_show_translation: !word.is_show_translation } : word)));
     };
 
-    const remove_word = (id: string) => {
-        API.remove_word(id)
-            .then(() => set_words((prev) => prev.filter((word) => String(word._id) !== String(id))))
-            .catch((err) => (err.message === 'UNAUTHORIZED' ? navigate('/auth') : console.log(err)));
+    const remove_word = async (id: string) => {
+        try {
+            await API.remove_word(id);
+            set_words((prev) => prev.filter((word) => String(word._id) !== String(id)));
+        } catch (err: any) {
+            Errors_message.set_message(err.message);
+        }
     };
 
     const reset_word = (id: string) => {
@@ -279,6 +285,23 @@ export const Words = observer(() => {
     const search_query = input_search.toLowerCase().trim();
     const words_filter = words.filter((word) => word.en.toLowerCase().includes(search_query) || word.ru.toLowerCase().includes(search_query));
 
+    if (is_loading)
+        return (
+            <div className={s.container}>
+                <div className={s.test}>
+                    <Skeleton width={73} height={25} />
+                    <Skeleton circle width={25} height={25} />
+                </div>
+                <Skeleton borderRadius={8} count={2} height={47} style={{ marginTop: '10px' }} />
+                <Skeleton borderRadius={6} width={115.53} height={33} />
+                <div className={s.wrapper_test}>
+                    <Skeleton width={180} height={21} />
+
+                    <Skeleton width={128.64} height={18} />
+                </div>
+                <Skeleton borderRadius={8} count={4} height={51} style={{ marginTop: '12px' }} />
+            </div>
+        );
     return (
         <div className={s.container}>
             <div className={s.test}>

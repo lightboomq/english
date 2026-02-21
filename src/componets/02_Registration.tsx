@@ -181,24 +181,35 @@ export const Registration = () => {
 
     return (
         <form onSubmit={send_data} className={s.wrapper_form}>
-            <div className={s.column_left}>
+            <div className={s.column_top}>
+                {index_field !== null &&
+                    fields[index_field].rules.map((item, i) => {
+                        return (
+                            <div key={i}>
+                                <img width={14} height={14} src={item.is_valid ? valid_png : invalid_png} alt='png' />
+                                <span className={s.message}>{item.message}</span>
+                            </div>
+                        );
+                    })}
+            </div>
+
+            <div className={s.column_bottom}>
                 <h2 className={s.title}>Регистрация</h2>
                 {fields.map((field) => {
                     return (
                         <div key={field.id} className={s.wrapper_input}>
-                            <label>
-                                {field.title}
-                                <input
-                                    type={set_type_password(field.title)}
-                                    data-id={field.id}
-                                    onFocus={(e) => handle_focus(e)}
-                                    onChange={(e) => handle_input(e, field.id)}
-                                    onBlur={(e) => handle_blur(e, field.id)}
-                                    autoComplete='off'
-                                    value={field.value}
-                                    className={field.is_has_err ? s.input_err : s.input_unerr}
-                                />
-                            </label>
+                            <label className={s.label_title}>{field.title}</label>
+                            <input
+                                type={set_type_password(field.title)}
+                                data-id={field.id}
+                                onFocus={(e) => handle_focus(e)}
+                                onChange={(e) => handle_input(e, field.id)}
+                                onBlur={(e) => handle_blur(e, field.id)}
+                                autoComplete='off'
+                                value={field.value}
+                                className={field.is_has_err ? s.input_err : s.input_unerr}
+                                style={{ height: '27px', fontSize: '14px' }}
+                            />
                             {field.type === 'password' && field.value.trim() !== '' ? (
                                 <img
                                     className={s.eye}
@@ -221,18 +232,6 @@ export const Registration = () => {
                         Уже есть аккаунт?
                     </Link>
                 </div>
-            </div>
-
-            <div className={s.column_right}>
-                {index_field !== null &&
-                    fields[index_field].rules.map((item, i) => {
-                        return (
-                            <div key={i}>
-                                <img width={14} height={14} src={item.is_valid ? valid_png : invalid_png} alt='png' />
-                                <span className={s.message}>{item.message}</span>
-                            </div>
-                        );
-                    })}
             </div>
         </form>
     );

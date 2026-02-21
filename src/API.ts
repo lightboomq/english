@@ -8,8 +8,8 @@ const request = async (url: string, options: RequestInit = {}) => {
         ...options, // Здесь будет method и body
         credentials: 'include', // Обязательно для работы с куками
     });
+    if (res.status === 204) return {}; // заглушка no-content с бекенда
     const data = await res.json();
-
     if (!res.ok) {
         if (res.status === 401 || res.status === 404) {
             //Выкидывает с системы
