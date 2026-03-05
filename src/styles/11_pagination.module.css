@@ -1,0 +1,60 @@
+/* Контейнер */
+.pagination {
+    display: flex;
+    margin: auto;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Базовая кнопка */
+.pagination__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Ховер эффект */
+
+/* Активная страница */
+.pagination__item--active {
+    background-color: #1e293b;
+    border-color: #1e293b;
+    color: #ffffff;
+    z-index: 1;
+}
+
+/* Многоточие */
+.pagination__item--ellipsis {
+    cursor: default;
+    border-color: transparent;
+    color: #94a3b8;
+}
+
+/* Заблокированная кнопка (стрелки) */
+.pagination__item:disabled:not(.pagination__item--ellipsis) {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f1f5f9;
+}
+
+/* Иконки внутри кнопок */
+.pagination__icon {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}

@@ -4,6 +4,7 @@
 }
 .wrapper {
     max-width: 800px;
+    min-height: 330px;
     display: flex;
     flex-direction: column;
     border: 1px solid #e2e8f0;
@@ -19,10 +20,12 @@
     font-size: 14px;
     text-decoration: underline;
 }
-.wrapper_radio_btn {
+.wrapper_btns {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    border-bottom: 1px solid #dfe4e9;
+    padding-bottom: 10px;
 }
 .wrapper_label {
     display: flex;
@@ -36,7 +39,12 @@
     width: 15px;
     height: 15px;
 }
-
+.range_text {
+    font-size: 15px;
+}
+.range_input {
+    max-width: 250px;
+}
 .remove_all_words {
     color: #cf222e;
     background-color: #f6f8fa;

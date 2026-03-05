@@ -1,22 +1,15 @@
 import React from 'react';
-import User_settings from '../store/User_settings';
+import s from '../styles/04_words.module.css';
 import { API } from '../API';
-import Loader from './09_Loader';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
+import { Skeleton_render } from './07_Skeleton_render';
 import settings_svg from '../assets/settings.svg';
-import { Notification } from './07_Notification';
-import favorite_word_png from '../assets/favorite_word.png';
-import favorite_word_added_png from '../assets/favorite_word_added.png';
-import send_svg from '../assets/send_input.svg';
-import show_translate_png from '../assets/show_translate_word.png';
-import hidden_translate_png from '../assets/hidden_translate_word.png';
-import reset_word_png from '../assets/reset_word.png';
-import remove_word_png from '../assets/remove_word.png';
 import Errors_message from '../store/Errors_message';
-import 'react-loading-skeleton/dist/skeleton.css';
-import s from '../styles/04_words.module.css';
-import Skeleton from 'react-loading-skeleton';
+import Pagination from './11_Pagination';
+import { Add_word_form } from './12_Add_word_form';
+import { Words_actions } from './13_Words_actions';
+import { Render_words } from './14_Render_words';
 
 interface Words {
     _id: string;
@@ -29,31 +22,35 @@ interface Words {
 
 export const Words = observer(() => {
     const [words, set_words] = React.useState<Words[]>([]);
-    const [input_en, set_input_en] = React.useState<string>('');
-    const [input_ru, set_input_ru] = React.useState<string>('');
-    const [is_open_notification, set_is_open_notification] = React.useState<boolean>(false);
     const [selected_word_id, set_selected_word_id] = React.useState<string>('');
-    const [input, set_input] = React.useState('');
-    const [placeholder_en, set_placeholder_en] = React.useState<string>('');
-    const [placeholder_ru, set_placeholder_ru] = React.useState<string>('');
-    const [is_render_placeholder, set_is_render_placeholder] = React.useState<boolean>(true);
-
+    const [input, set_input] = React.useState<string>('');
     const [input_search, set_input_search] = React.useState<string>('');
-    const [err, set_err] = React.useState<string>('');
-    const input_ref_en = React.useRef<HTMLInputElement>(null);
     const input_ref_translation = React.useRef<HTMLInputElement>(null);
     const [is_loading, set_is_loading] = React.useState<boolean>(false);
+    // Number(localStorage.getItem('page'))
+    const [page, set_page] = React.useState<number>(1);
+    const [total_pages, set_total_pages] = React.useState<number>(1);
+    const [total_words, set_total_words] = React.useState<number>(0);
+    const [limit_words, set_limit_words] = React.useState<number>(20);
+
     const navigate = useNavigate();
 
     React.useEffect(() => {
         const get_all_words = async () => {
             try {
                 set_is_loading(true);
-                const [settings, res] = await Promise.all([API.get_settings(), API.get_all_words()]);
+                const [settings, res] = await Promise.all([API.get_settings(), API.get_all_words(page, limit_words)]);
+
+                set_limit_words(settings.range_value);
+                set_total_words(res.total_words);
+                set_total_pages(res.total_pages);
+                set_page(res.current_page);
+
+                localStorage.setItem('page', res.current_page);
                 if (settings.is_mix_words) {
-                    mix_words(res);
+                    mix_words(res.words);
                 } else {
-                    set_words(res);
+                    set_words(res.words);
                 }
             } catch (err: any) {
                 Errors_message.set_message(err.message);
@@ -62,7 +59,7 @@ export const Words = observer(() => {
             }
         };
         get_all_words();
-    }, []);
+    }, [page, limit_words]);
 
     const mix_words = (arr: Words[]) => {
         const clone_words = [...arr];
@@ -77,68 +74,6 @@ export const Words = observer(() => {
         set_selected_word_id('');
         set_words(clone_words);
     };
-
-    React.useEffect(() => {
-        if (words.length > 0) {
-            set_placeholder_en('');
-            set_placeholder_ru('');
-            return;
-        }
-
-        let active = true;
-
-        const dictionary = [
-            { en: 'innovate', ru: 'обновлять' },
-            { en: 'achieve', ru: 'достигать' },
-            { en: 'imagine', ru: 'представить' },
-            { en: 'transform', ru: 'изменять' },
-            { en: 'deliver', ru: 'доставлять' },
-            { en: 'empower', ru: 'усиливать' },
-            { en: 'simplify', ru: 'упрощать' },
-            { en: 'connect', ru: 'связывать' },
-            { en: 'improve', ru: 'улучшать' },
-            { en: 'master', ru: 'освоить' },
-        ];
-
-        const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-        const write = async (delay: number, str: string, set_placeholder: any) => {
-            for (const char of str) {
-                await sleep(delay);
-                set_placeholder((prev: string) => prev + char);
-            }
-        };
-
-        const erase = async (delay: number, str: string, set_placeholder: any) => {
-            for (const _ of str) {
-                await sleep(delay);
-                set_placeholder((prev: string) => prev.slice(0, -1));
-            }
-        };
-
-        const render_placeholder = async () => {
-            while (active) {
-                for (const item of dictionary) {
-                    if (!active) return;
-                    await write(130, item.en, set_placeholder_en);
-                    await sleep(200);
-                    await write(130, item.ru, set_placeholder_ru);
-                    await sleep(1000);
-                    erase(50, item.en, set_placeholder_en);
-                    await erase(50, item.ru, set_placeholder_ru);
-                    await sleep(1000);
-                }
-            }
-        };
-
-        render_placeholder();
-
-        return () => {
-            active = false;
-            set_placeholder_en('');
-            set_placeholder_ru('');
-        };
-    }, [words.length]);
 
     React.useEffect(() => {
         const handler_global_click = (e: MouseEvent) => {
@@ -177,67 +112,6 @@ export const Words = observer(() => {
         input_ref_translation.current?.focus();
     }, [selected_word_id]); //смена фокуса на следущее слово , нажатие enter или лкм на send
 
-    const add_word = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const en = input_en.trim();
-        const ru = input_ru.trim();
-        if (!en || !ru) return set_err('Заполните оба поля');
-
-        const is_valid_en = /^[A-Za-z\s]+$/.test(en);
-        const is_valid_ru = /^[А-Яа-яЁё\s]+$/.test(ru);
-
-        if (!is_valid_en || !is_valid_ru) return set_err('Проверьте раскладку: EN для английского, RU для русского');
-
-        API.add_word({ en, ru })
-            .then((new_word) => {
-                set_words((prev) => [...prev, new_word]);
-                set_input_en('');
-                set_input_ru('');
-                set_err('');
-                if (input_ref_en.current) input_ref_en.current.focus();
-            })
-            .catch((err) => (err.message === 'UNAUTHORIZED' ? navigate('/auth') : console.log(err)));
-    };
-
-    const render_word = (word: Words) => {
-        if (word.is_correct_translation) return `${word.en} - ${word.ru}`;
-        if (word.is_show_translation) return word.ru;
-        return word.en;
-    };
-
-    const show_translation = (id: string) => {
-        set_words((prev) => prev.map((word) => (word._id === id ? { ...word, is_show_translation: !word.is_show_translation } : word)));
-    };
-
-    const remove_word = async (id: string) => {
-        try {
-            await API.remove_word(id);
-            set_words((prev) => prev.filter((word) => String(word._id) !== String(id)));
-        } catch (err: any) {
-            Errors_message.set_message(err.message);
-        }
-    };
-
-    const reset_word = (id: string) => {
-        API.reset_word(id)
-            .then(() => {
-                set_words((prev) =>
-                    prev.map((word) => {
-                        if (word._id === id) {
-                            const { is_correct_translation, ...rest } = word; // rest оператор собрать все остальное
-                            return {
-                                ...rest, //spread оператор разобрать обратно
-                                is_show_translation: false,
-                            };
-                        }
-                        return word;
-                    }),
-                );
-                input_ref_translation.current?.focus();
-            })
-            .catch((err) => (err.message === 'UNAUTHORIZED' ? navigate('/auth') : console.log(err)));
-    };
-
     const select_word = (e: React.MouseEvent<HTMLOListElement>) => {
         const li = (e.target as HTMLElement).closest('li');
         if (!li) return;
@@ -245,100 +119,22 @@ export const Words = observer(() => {
         set_selected_word_id(id);
     };
 
-    const highlight_word = (is_correct: boolean | undefined) => {
-        if (is_correct) return s.correct_translation;
-        if (is_correct === false) return s.un_correct_translation;
-    };
+    if (is_loading) {
+        return <Skeleton_render />;
+    }
+    const search_value = input_search.toLowerCase().trim();
+    const filtered_words = words.filter((word) => word.en.toLowerCase().includes(search_value) || word.ru.toLowerCase().includes(search_value));
 
-    const give_translation = (e: React.FormEvent, id: string) => {
-        e.preventDefault();
-        const value = input_ref_translation.current?.value.trim();
-        if (!value) return;
-
-        const clone_words = [...words];
-        const current_index = clone_words.findIndex((word) => word._id === id);
-        const current_word = clone_words[current_index].ru.toLowerCase();
-        const is_correct = current_word === input.toLowerCase().trim();
-
-        clone_words[current_index] = { ...clone_words[current_index], is_correct_translation: is_correct, user_response: input };
-
-        let next_index = current_index;
-
-        while (next_index < clone_words.length - 1) {
-            next_index++;
-            const user_response = clone_words[next_index].user_response;
-            if (user_response === undefined) break;
-        }
-
-        if (next_index === clone_words.length - 1 && clone_words[next_index].user_response !== undefined) {
-            set_selected_word_id('');
-        } else {
-            set_selected_word_id(clone_words[next_index]._id);
-        }
-        set_words(clone_words);
-        set_input('');
-
-        API.give_translation(id, is_correct).catch((err) => (err.message === 'UNAUTHORIZED' ? navigate('/auth') : console.log(err)));
-    };
-
-    const add_word_favorite = () => {};
-    const search_query = input_search.toLowerCase().trim();
-    const words_filter = words.filter((word) => word.en.toLowerCase().includes(search_query) || word.ru.toLowerCase().includes(search_query));
-
-    if (is_loading)
-        return (
-            <div className={s.container}>
-                <div className={s.test}>
-                    <Skeleton width={73} height={25} />
-                    <Skeleton circle width={25} height={25} />
-                </div>
-                <Skeleton borderRadius={8} count={2} height={47} style={{ marginTop: '10px' }} />
-                <Skeleton borderRadius={6} width={115.53} height={33} />
-                <div className={s.wrapper_test}>
-                    <Skeleton width={180} height={21} />
-
-                    <Skeleton width={128.64} height={18} />
-                </div>
-                <Skeleton borderRadius={8} count={4} height={51} style={{ marginTop: '12px' }} />
-            </div>
-        );
     return (
         <div className={s.container}>
-            <div className={s.test}>
-                {words.length >= 1 && <h4>Слов : {words.length}</h4>}
+            <div className={s.header}>
+                {words.length >= 1 && <h4>Слов : {total_words}</h4>}
                 <img className={s.settings} src={settings_svg} onClick={() => navigate('/settings')} title='Настройки' alt='Настройки' />
             </div>
-
-            <form onSubmit={add_word}>
-                <input
-                    className={s.word_input}
-                    value={input_en}
-                    onChange={(e) => set_input_en(e.target.value)}
-                    ref={input_ref_en}
-                    onFocus={() => set_is_render_placeholder(false)}
-                    autoComplete='off'
-                    name='en'
-                    type='text'
-                    placeholder={is_render_placeholder && words.length === 0 ? placeholder_en : 'en'}
-                />
-
-                <input
-                    className={s.word_input}
-                    value={input_ru}
-                    onChange={(e) => set_input_ru(e.target.value)}
-                    onFocus={() => set_is_render_placeholder(false)}
-                    autoComplete='off'
-                    name='ru'
-                    type='text'
-                    placeholder={is_render_placeholder && words.length === 0 ? placeholder_ru : 'ru'}
-                />
-                <button className={s.add_word_btn} type='submit'>
-                    Добавить
-                </button>
-            </form>
-            {err && <span className={s.err}>{err}</span>}
+            <Add_word_form words={words} set_words={set_words} limit_words={limit_words} set_page={set_page} set_total_words={set_total_words} />
             {words.length >= 1 && (
-                <div className={s.wrapper_test}>
+                <>
+                    <Words_actions words={words} set_words={set_words} mix_words={mix_words} />
                     <input
                         className={s.input_filtering}
                         value={input_search}
@@ -347,76 +143,30 @@ export const Words = observer(() => {
                         placeholder='Поиск слов...'
                         autoComplete='off'
                     />
-                    <button className={s.mix_words_btn} onClick={() => mix_words(words)} type='button'>
-                        Перемешать слова
-                    </button>
-                </div>
+                </>
             )}
-
-            {input_search && <p className={s.search_counter}>Найдено: {words_filter.length}</p>}
+            {input_search && <p className={s.search_counter}>Найдено: {filtered_words.length}</p>}
 
             <ol className={s.wrapper_words} onClick={select_word}>
                 {words.length === 0 ? (
-                    <p>Словарь пуст. Добавьте слово</p>
+                    <li>Словарь пуст. Добавьте слово</li>
                 ) : (
-                    words_filter.map((word) => {
-                        return (
-                            <li className={word._id === selected_word_id ? `${s.wrapper_word} ${s.active_word}` : s.wrapper_word} key={word._id} data-id={word._id}>
-                                <span className={highlight_word(word.is_correct_translation)}>{render_word(word)}</span>
-
-                                {word._id === selected_word_id && (
-                                    <>
-                                        {!word.is_correct_translation && (
-                                            <form className={s.wrapper_input_translation} onSubmit={(e) => give_translation(e, selected_word_id)}>
-                                                <input
-                                                    className={s.input_translation}
-                                                    ref={input_ref_translation}
-                                                    onChange={(e) => set_input(e.target.value)}
-                                                    type='text'
-                                                    placeholder='Введите перевод...'
-                                                />
-
-                                                <button className={s.send_btn} type='submit'>
-                                                    <img src={send_svg} title='Далее' />
-                                                </button>
-                                            </form>
-                                        )}
-                                        <div className={s.wrapper_action}>
-                                            <img className={s.favorite} onClick={add_word_favorite} src={favorite_word_png} title='Избранное' alt='favorite' />
-                                            <img
-                                                className={word.is_correct_translation ? `${s.word_action} ${s.disabled}` : s.word_action}
-                                                onClick={() => show_translation(word._id)}
-                                                draggable='false'
-                                                src={word.is_show_translation ? hidden_translate_png : show_translate_png}
-                                                title='Показать перевод'
-                                                alt='eye'
-                                            />
-                                            <img
-                                                className={s.word_action}
-                                                draggable='false'
-                                                onClick={() => reset_word(word._id)}
-                                                src={reset_word_png}
-                                                title='Сбросить'
-                                                alt='reset'
-                                            />
-                                            <img
-                                                className={s.word_action}
-                                                onClick={() => remove_word(word._id)}
-                                                draggable='false'
-                                                src={remove_word_png}
-                                                title='Удалить'
-                                                alt='remove'
-                                            />
-                                        </div>
-                                    </>
-                                )}
-                            </li>
-                        );
-                    })
+                    filtered_words.map((word) => (
+                        <Render_words
+                            key={word._id}
+                            word={word}
+                            words={words}
+                            set_words={set_words}
+                            set_page={set_page}
+                            set_total_words={set_total_words}
+                            input_ref_translation={input_ref_translation}
+                            selected_word_id={selected_word_id}
+                            set_selected_word_id={set_selected_word_id}
+                        />
+                    ))
                 )}
             </ol>
-
-            {is_open_notification && <Notification text='test' set_is_open_notification={set_is_open_notification} />}
+            {words.length >= 1 && <Pagination currentPage={page} total_pages={total_pages} onPageChange={(newPage) => set_page(newPage)} />}
         </div>
     );
 });

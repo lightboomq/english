@@ -41,8 +41,8 @@ export const API = {
             body: JSON.stringify(obj),
         });
     },
-    get_all_words: () => {
-        return request(`${API_URL}/words`, {
+    get_all_words: (page: number, limit_words: number) => {
+        return request(`${API_URL}/words?page=${page}&limit_words=${limit_words}`, {
             method: 'GET',
         });
     },
@@ -54,21 +54,30 @@ export const API = {
             body: JSON.stringify(word),
         });
     },
-    give_translation: (id: string, is_correct: boolean) => {
+    //Дать перевод
+    give_translation: (id: string, is_correct_translation: boolean) => {
         return request(`${API_URL}/words/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({
-                is_correct,
+                is_correct_translation,
             }),
         });
     },
-
+    //Сбросить перевод всех слов на текущей странице
+    reset_all_words: (ids: string[]) => {
+        return request(`${API_URL}/words`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                ids,
+            }),
+        });
+    },
     //Сбросить перевод слова
     reset_word: (id: string) => {
         return request(`${API_URL}/words/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({
-                is_correct_translation: null,
+                is_correct_translation: undefined,
             }),
         });
     },
@@ -93,12 +102,10 @@ export const API = {
         });
     },
 
-    set_settings: (is_mix_words: boolean) => {
+    set_settings: (settings) => {
         return request(`${API_URL}/settings`, {
             method: 'PATCH',
-            body: JSON.stringify({
-                is_mix_words,
-            }),
+            body: JSON.stringify(settings),
         });
     },
 };

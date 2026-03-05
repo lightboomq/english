@@ -1,0 +1,50 @@
+.wrapper_btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btns {
+    color: #64748b;
+    font-size: 14px;
+    text-decoration: underline;
+}
+.btn_reset {
+    position: relative;
+    padding-right: 12px;
+}
+.btns:hover {
+    color: #1e293b;
+}
+
+/* ИИ */
+.loading {
+    position: absolute;
+    right: 1px;
+    bottom: -2.4px;
+    text-decoration: underline;
+}
+.dots {
+    animation: blink 1.4s infinite both;
+}
+
+/* Задержка для второй точки */
+.dots:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+/* Задержка для третьей точки */
+.dots:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0.2;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+}

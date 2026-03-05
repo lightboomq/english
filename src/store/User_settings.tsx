@@ -1,9 +1,11 @@
 import { makeAutoObservable } from 'mobx';
 interface Data {
     is_mix_words: boolean;
+    page_limit: number;
 }
 class Settings_store {
     is_mix_words: boolean = false;
+
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true });
     }
