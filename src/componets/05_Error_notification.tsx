@@ -24,7 +24,7 @@ const Error_notification = () => {
                 <img onClick={() => Error_messages.set_message('')} src={close_err} className={s.close_err} alt='close_err' />
             </div>
 
-            <p className={s.text}>{Error_messages.get_message()}</p>
+            <p className={s.text}>{Error_messages.get_message()}Пользователь не найден</p>
 
             <div className={s.line}> </div>
         </div>

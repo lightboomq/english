@@ -1,7 +1,3 @@
-* {
-    margin: 0;
-    padding: 0;
-}
 .wrapper {
     max-width: 800px;
     min-height: 330px;
@@ -39,10 +35,22 @@
     width: 15px;
     height: 15px;
 }
+.wrapper_range {
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+}
+.title_range {
+    font-size: 17px;
+    font-weight: 400;
+}
+.range {
+    margin: 10px 0 0 20px;
+}
 .range_text {
     font-size: 15px;
 }
 .range_input {
+    cursor: pointer;
     max-width: 250px;
 }
 .remove_all_words {

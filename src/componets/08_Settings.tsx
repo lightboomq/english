@@ -12,7 +12,8 @@ export const Settings = observer(() => {
     const [is_disabled, set_is_disabled] = React.useState<boolean>(false);
     const [is_mix, set_is_mix] = React.useState<boolean>(false);
     const [max_range, set_max_range] = React.useState<number>(0);
-    const [range_value, set_range_value] = React.useState<number>(0);
+    const [limit_words, set_limit_words] = React.useState<number>(0);
+    const [is_default_limit, set_is_default_limit] = React.useState<boolean>(true);
     const navigate = useNavigate();
 
     React.useEffect(() => {
@@ -21,8 +22,9 @@ export const Settings = observer(() => {
                 set_is_loading(true);
                 const res = await API.get_settings();
                 set_is_mix(res.is_mix_words);
-                set_range_value(res.range_value);
                 set_max_range(res.total_words);
+                set_limit_words(res.limit_words);
+                set_is_default_limit(res.is_default_limit);
             } catch (err: any) {
                 Errors_message.set_message(err.message);
             } finally {
@@ -39,6 +41,7 @@ export const Settings = observer(() => {
         try {
             set_is_loading(true);
             await API.remove_all_words();
+            set_is_disabled(true);
             Success_message.set_is_show(true);
         } catch (err: any) {
             Errors_message.set_message(err.message);
@@ -47,15 +50,21 @@ export const Settings = observer(() => {
         }
     };
 
-    const handle_inputs = async (settings: { is_mix_words?: boolean; range_value?: number }) => {
+    const handle_inputs = async (settings: { is_mix_words?: boolean; is_default_limit?: boolean; limit_words?: number }) => {
+        if (is_disabled) return;
         try {
-            const { is_mix_words } = settings;
-
+            const { is_mix_words, is_default_limit, limit_words } = settings;
             set_is_disabled(true);
             await API.set_settings(settings);
-            if (is_mix_words !== undefined) set_is_mix((prev) => !prev);
 
-            Success_message.set_is_show(true);
+            if (is_mix_words !== undefined) set_is_mix((prev) => !prev);
+            if (is_default_limit !== undefined) {
+                set_is_default_limit(true);
+                set_limit_words(20);
+            }
+            if (limit_words !== undefined) set_is_default_limit(false);
+
+            // Success_message.set_is_show(true);
         } catch (err: any) {
             Errors_message.set_message(err.message);
         } finally {
@@ -72,9 +81,10 @@ export const Settings = observer(() => {
 
     return (
         <div className={s.wrapper}>
-            <button className={s.go_back} disabled={is_disabled} onClick={() => navigate('/words')} type='button'>
+            <button className={s.go_back} onClick={() => navigate('/words')} type='button'>
                 Выход
             </button>
+
             <div className={s.wrapper_btns}>
                 <label className={s.wrapper_label}>
                     <input className={s.radio_btn} type='radio' name='sort_type' disabled={is_disabled} checked={!is_mix} onChange={() => handle_inputs({ is_mix_words: false })} />
@@ -86,18 +96,31 @@ export const Settings = observer(() => {
                     Перемешивать слова после загрузки страницы.
                 </label>
             </div>
-            <div className={s.wrapper_btns}>
-                <p className={s.range_text}>Показать слов: {range_value}</p>
-                <input
-                    className={s.range_input}
-                    type='range'
-                    value={range_value}
-                    disabled={is_disabled}
-                    onChange={(e) => set_range_value(Number(e.target.value))}
-                    onPointerUp={() => handle_inputs({ range_value })}
-                    min='1'
-                    max={max_range}
-                />
+
+            <div>
+                <h3 className={s.title_range}>Слов на странице</h3>
+                <div className={s.wrapper_range}>
+                    <label className={s.wrapper_label}>
+                        <input className={s.radio_btn} type='radio' disabled={is_disabled} checked={is_default_limit} onChange={() => handle_inputs({ is_default_limit: true })} />
+                        По умолчанию: 20
+                    </label>
+                    <div className={s.range}>
+                        <p className={s.range_text}>Выбрано: {limit_words}</p>
+                        <input
+                            className={s.range_input}
+                            type='range'
+                            value={limit_words}
+                            disabled={is_disabled}
+                            onChange={(e) => {
+                                set_limit_words(Number(e.target.value));
+                                set_is_default_limit(false);
+                            }}
+                            onPointerUp={() => handle_inputs({ limit_words })}
+                            min='1'
+                            max={max_range}
+                        />
+                    </div>
+                </div>
             </div>
 
             <button className={s.remove_all_words} disabled={is_disabled} onClick={remove_all_words} type='button'>

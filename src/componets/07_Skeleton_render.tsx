@@ -21,8 +21,8 @@ export const Skeleton_render = () => {
             <Skeleton style={{ marginTop: '15px' }} borderRadius={8} height={51} />
             <Skeleton style={{ marginTop: '12px' }} borderRadius={8} height={51} />
             <Skeleton style={{ marginTop: '12px' }} borderRadius={8} height={51} />
-            <Skeleton style={{ marginTop: '12px' }} borderRadius={8} height={51} />
-            <div style={{ display: 'flex', gap: '6px', marginTop: '12px', margin: 'auto' }}>
+            <Skeleton style={{ marginTop: '12px', marginBottom: '12px' }} borderRadius={8} height={51} />
+            <div style={{ display: 'flex', gap: '6px', margin: 'auto' }}>
                 <Skeleton width={54} borderRadius={8} height={42} />
                 <Skeleton width={54} borderRadius={8} height={42} />
                 <Skeleton width={54} borderRadius={8} height={42} />

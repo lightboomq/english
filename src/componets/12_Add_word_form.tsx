@@ -128,11 +128,11 @@ export const Add_word_form = ({ words, set_words, limit_words, set_page, set_tot
                 type='text'
                 placeholder={is_render_placeholder && words.length === 0 ? placeholder_ru : 'ru'}
             />
-            {words.length >= 1 && (
-                <button className={is_disabled ? `${s.add_word_btn} ${s.loading}` : s.add_word_btn} type='submit' disabled={is_disabled}>
-                    Добавить
-                </button>
-            )}
+
+            <button className={is_disabled ? `${s.add_word_btn} ${s.loading}` : s.add_word_btn} type='submit' disabled={is_disabled}>
+                Добавить
+            </button>
+
             {err && <span className={s.err}>{err}</span>}
         </form>
     );

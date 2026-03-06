@@ -19,8 +19,8 @@
 /* ИИ */
 .loading {
     position: absolute;
-    right: 1px;
-    bottom: -2.4px;
+    right: -0.4px;
+    bottom: -0.8px;
     text-decoration: underline;
 }
 .dots {

@@ -4,12 +4,13 @@ import { API } from '../API';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton_render } from './07_Skeleton_render';
-import settings_svg from '../assets/settings.svg';
-import Errors_message from '../store/Errors_message';
-import Pagination from './11_Pagination';
 import { Add_word_form } from './12_Add_word_form';
 import { Words_actions } from './13_Words_actions';
 import { Render_words } from './14_Render_words';
+import settings_svg from '../assets/settings.svg';
+import Errors_message from '../store/Errors_message';
+import Pagination from './11_Pagination';
+import empty_words_avif from '../assets/empty_words.avif';
 
 interface Words {
     _id: string;
@@ -21,17 +22,17 @@ interface Words {
 }
 
 export const Words = observer(() => {
+    const DEFAULT_LIMIT = 20;
     const [words, set_words] = React.useState<Words[]>([]);
     const [selected_word_id, set_selected_word_id] = React.useState<string>('');
     const [input, set_input] = React.useState<string>('');
     const [input_search, set_input_search] = React.useState<string>('');
     const input_ref_translation = React.useRef<HTMLInputElement>(null);
-    const [is_loading, set_is_loading] = React.useState<boolean>(false);
-    // Number(localStorage.getItem('page'))
-    const [page, set_page] = React.useState<number>(1);
-    const [total_pages, set_total_pages] = React.useState<number>(1);
+    const [is_loading, set_is_loading] = React.useState<boolean>(true);
+    const [page, set_page] = React.useState<number>(Number(localStorage.getItem('page')) || 1);
+    const [total_pages, set_total_pages] = React.useState<number>(0);
     const [total_words, set_total_words] = React.useState<number>(0);
-    const [limit_words, set_limit_words] = React.useState<number>(20);
+    const [limit_words, set_limit_words] = React.useState<number>(DEFAULT_LIMIT);
 
     const navigate = useNavigate();
 
@@ -39,19 +40,21 @@ export const Words = observer(() => {
         const get_all_words = async () => {
             try {
                 set_is_loading(true);
-                const [settings, res] = await Promise.all([API.get_settings(), API.get_all_words(page, limit_words)]);
+                const settings = await API.get_settings();
 
-                set_limit_words(settings.range_value);
+                if (settings.is_default_limit) {
+                    set_limit_words(DEFAULT_LIMIT);
+                } else {
+                    set_limit_words(settings.limit_words);
+                }
+
+                const res = await API.get_all_words(page, settings.limit_words);
                 set_total_words(res.total_words);
                 set_total_pages(res.total_pages);
-                set_page(res.current_page);
-
                 localStorage.setItem('page', res.current_page);
-                if (settings.is_mix_words) {
-                    mix_words(res.words);
-                } else {
-                    set_words(res.words);
-                }
+                if (settings.is_mix_words) return mix_words(res.words);
+
+                set_words(res.words);
             } catch (err: any) {
                 Errors_message.set_message(err.message);
             } finally {
@@ -59,7 +62,7 @@ export const Words = observer(() => {
             }
         };
         get_all_words();
-    }, [page, limit_words]);
+    }, [page]);
 
     const mix_words = (arr: Words[]) => {
         const clone_words = [...arr];
@@ -88,6 +91,7 @@ export const Words = observer(() => {
     }, []);
 
     React.useEffect(() => {
+        if (words.length === 0 || !selected_word_id) return;
         const handler_global_key_down = (e: KeyboardEvent) => {
             const current_index = words.findIndex((word) => word._id === selected_word_id);
 
@@ -147,11 +151,13 @@ export const Words = observer(() => {
             )}
             {input_search && <p className={s.search_counter}>Найдено: {filtered_words.length}</p>}
 
-            <ol className={s.wrapper_words} onClick={select_word}>
-                {words.length === 0 ? (
-                    <li>Словарь пуст. Добавьте слово</li>
-                ) : (
-                    filtered_words.map((word) => (
+            {words.length === 0 ? (
+                <div className={s.empty_container}>
+                    <img className={s.no_words_img} src={empty_words_avif} alt='Список пуст' />
+                </div>
+            ) : (
+                <ol className={s.wrapper_words} onClick={select_word}>
+                    {filtered_words.map((word) => (
                         <Render_words
                             key={word._id}
                             word={word}
@@ -163,9 +169,10 @@ export const Words = observer(() => {
                             selected_word_id={selected_word_id}
                             set_selected_word_id={set_selected_word_id}
                         />
-                    ))
-                )}
-            </ol>
+                    ))}
+                </ol>
+            )}
+
             {words.length >= 1 && <Pagination currentPage={page} total_pages={total_pages} onPageChange={(newPage) => set_page(newPage)} />}
         </div>
     );
