@@ -3,12 +3,12 @@ import s from '../styles/11_pagination.module.css';
 
 interface Props {
     currentPage: number;
-    total_pages: number; // Берем напрямую из ответа сервера (Math.ceil(total/limit))
+    total_pages: number;
     onPageChange: (page: number) => void;
 }
-
+//ИИ
 const Pagination: React.FC<Props> = ({ currentPage, total_pages, onPageChange }) => {
-    // if (total_pages <= 1) return null;
+    if (total_pages <= 1) return null;
 
     const getPages = () => {
         const delta = 1;
@@ -24,12 +24,12 @@ const Pagination: React.FC<Props> = ({ currentPage, total_pages, onPageChange })
     };
     return (
         <nav className={s.pagination}>
-            {/* Назад */}
+            {/* Назад
             <button className={s.pagination__item} onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
                 <svg className={s.pagination__icon} viewBox='0 0 24 24' stroke='currentColor' fill='none' strokeWidth='2'>
                     <path d='M15 19l-7-7 7-7' />
                 </svg>
-            </button>
+            </button> */}
 
             {/* Цифры */}
             {getPages().map((page, idx) => (
@@ -48,11 +48,11 @@ const Pagination: React.FC<Props> = ({ currentPage, total_pages, onPageChange })
             ))}
 
             {/* Вперед */}
-            <button className={s.pagination__item} onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === total_pages}>
+            {/* <button className={s.pagination__item} onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === total_pages}>
                 <svg className={s.pagination__icon} viewBox='0 0 24 24' stroke='currentColor' fill='none' strokeWidth='2'>
                     <path d='M9 5l7 7-7 7' />
                 </svg>
-            </button>
+            </button> */}
         </nav>
     );
 };

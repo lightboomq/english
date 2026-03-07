@@ -9,7 +9,7 @@ const Error_notification = () => {
     React.useEffect(() => {
         const timer_id = setTimeout(() => {
             Error_messages.set_message('');
-        }, 10000);
+        }, 9000);
 
         return () => {
             clearTimeout(timer_id);
@@ -24,7 +24,7 @@ const Error_notification = () => {
                 <img onClick={() => Error_messages.set_message('')} src={close_err} className={s.close_err} alt='close_err' />
             </div>
 
-            <p className={s.text}>{Error_messages.get_message()}Пользователь не найден</p>
+            <p className={s.text}>{Error_messages.get_message()}</p>
 
             <div className={s.line}> </div>
         </div>

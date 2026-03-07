@@ -19,9 +19,8 @@
 /* ИИ */
 .loading {
     position: absolute;
-    right: -0.4px;
-    bottom: -0.8px;
-    text-decoration: underline;
+    right: -2px;
+    bottom: -3px;
 }
 .dots {
     animation: blink 1.4s infinite both;

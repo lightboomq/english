@@ -19,7 +19,18 @@ interface Words {
     is_correct_translation?: boolean;
     user_response?: string;
 }
-export const Render_words = ({ word, words, set_words, set_page, set_total_words, input_ref_translation, selected_word_id, set_selected_word_id }) => {
+export const Render_words = ({
+    word,
+    words,
+    set_words,
+    set_total_pages,
+    set_total_words,
+    current_page,
+    input_ref_translation,
+    change_page,
+    selected_word_id,
+    set_selected_word_id,
+}) => {
     const [input, set_input] = React.useState<string>('');
     const render_word = (word: Words) => {
         if (word.is_correct_translation) return `${word.en} - ${word.ru}`;
@@ -34,9 +45,14 @@ export const Render_words = ({ word, words, set_words, set_page, set_total_words
     const remove_word = async (id: string) => {
         try {
             await API.remove_word(id);
-            set_page((prev) => (prev === 1 ? 1 : prev - 1));
+            const updated_words = words.filter((word) => String(word._id) !== String(id));
+
+            if (updated_words.length === 0) {
+                if (current_page - 1 !== 0) change_page(current_page - 1);
+                set_total_pages((prev) => prev - 1);
+            }
             set_total_words((prev) => prev - 1);
-            set_words((prev) => prev.filter((word) => String(word._id) !== String(id)));
+            set_words(updated_words);
         } catch (err: any) {
             Errors_message.set_message(err.message);
         }

@@ -2,7 +2,7 @@ import React from 'react';
 import s from '../styles/04_words.module.css';
 import { API } from '../API';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Skeleton_render } from './07_Skeleton_render';
 import { Add_word_form } from './12_Add_word_form';
 import { Words_actions } from './13_Words_actions';
@@ -11,6 +11,7 @@ import settings_svg from '../assets/settings.svg';
 import Errors_message from '../store/Errors_message';
 import Pagination from './11_Pagination';
 import empty_words_avif from '../assets/empty_words.avif';
+import { CopyX } from 'lucide-react';
 
 interface Words {
     _id: string;
@@ -29,14 +30,22 @@ export const Words = observer(() => {
     const [input_search, set_input_search] = React.useState<string>('');
     const input_ref_translation = React.useRef<HTMLInputElement>(null);
     const [is_loading, set_is_loading] = React.useState<boolean>(true);
-    const [page, set_page] = React.useState<number>(Number(localStorage.getItem('page')) || 1);
-    const [total_pages, set_total_pages] = React.useState<number>(0);
+    const [total_pages, set_total_pages] = React.useState<number>(1);
     const [total_words, set_total_words] = React.useState<number>(0);
     const [limit_words, set_limit_words] = React.useState<number>(DEFAULT_LIMIT);
-
     const navigate = useNavigate();
 
+    const [url_page, set_url_page] = useSearchParams();
+    const current_page = Number(url_page.get('page')) || 1;
+
+    const change_page = (new_page: number | string) => {
+        set_url_page({ page: String(new_page) });
+    };
+
     React.useEffect(() => {
+        if (!url_page.get('page')) {
+            set_url_page({ page: '1' }, { replace: true });
+        }
         const get_all_words = async () => {
             try {
                 set_is_loading(true);
@@ -47,11 +56,11 @@ export const Words = observer(() => {
                 } else {
                     set_limit_words(settings.limit_words);
                 }
-
-                const res = await API.get_all_words(page, settings.limit_words);
+                const res = await API.get_all_words(current_page, settings.limit_words);
                 set_total_words(res.total_words);
                 set_total_pages(res.total_pages);
-                localStorage.setItem('page', res.current_page);
+                // set_current_page(res.current_page);
+
                 if (settings.is_mix_words) return mix_words(res.words);
 
                 set_words(res.words);
@@ -62,7 +71,7 @@ export const Words = observer(() => {
             }
         };
         get_all_words();
-    }, [page]);
+    }, [current_page]);
 
     const mix_words = (arr: Words[]) => {
         const clone_words = [...arr];
@@ -135,7 +144,15 @@ export const Words = observer(() => {
                 {words.length >= 1 && <h4>Слов : {total_words}</h4>}
                 <img className={s.settings} src={settings_svg} onClick={() => navigate('/settings')} title='Настройки' alt='Настройки' />
             </div>
-            <Add_word_form words={words} set_words={set_words} limit_words={limit_words} set_page={set_page} set_total_words={set_total_words} />
+            <Add_word_form
+                words={words}
+                set_words={set_words}
+                limit_words={limit_words}
+                total_pages={total_pages}
+                change_page={change_page}
+                current_page={current_page}
+                set_total_words={set_total_words}
+            />
             {words.length >= 1 && (
                 <>
                     <Words_actions words={words} set_words={set_words} mix_words={mix_words} />
@@ -162,8 +179,10 @@ export const Words = observer(() => {
                             key={word._id}
                             word={word}
                             words={words}
+                            current_page={current_page}
+                            change_page={change_page}
                             set_words={set_words}
-                            set_page={set_page}
+                            set_total_pages={set_total_pages}
                             set_total_words={set_total_words}
                             input_ref_translation={input_ref_translation}
                             selected_word_id={selected_word_id}
@@ -173,7 +192,7 @@ export const Words = observer(() => {
                 </ol>
             )}
 
-            {words.length >= 1 && <Pagination currentPage={page} total_pages={total_pages} onPageChange={(newPage) => set_page(newPage)} />}
+            {total_pages >= 1 && <Pagination currentPage={current_page} total_pages={total_pages} onPageChange={(page) => change_page(page)} />}
         </div>
     );
 });

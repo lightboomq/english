@@ -11,7 +11,7 @@ export const Settings = observer(() => {
     const [is_loading, set_is_loading] = React.useState<boolean>(false);
     const [is_disabled, set_is_disabled] = React.useState<boolean>(false);
     const [is_mix, set_is_mix] = React.useState<boolean>(false);
-    const [max_range, set_max_range] = React.useState<number>(0);
+    const [total_words, set_total_words] = React.useState<number>(0);
     const [limit_words, set_limit_words] = React.useState<number>(0);
     const [is_default_limit, set_is_default_limit] = React.useState<boolean>(true);
     const navigate = useNavigate();
@@ -20,11 +20,11 @@ export const Settings = observer(() => {
         const get_settings = async () => {
             try {
                 set_is_loading(true);
-                const res = await API.get_settings();
-                set_is_mix(res.is_mix_words);
-                set_max_range(res.total_words);
-                set_limit_words(res.limit_words);
-                set_is_default_limit(res.is_default_limit);
+                const settings = await API.get_settings();
+                set_is_mix(settings.is_mix_words);
+                set_total_words(settings.total_words);
+                set_limit_words(settings.limit_words);
+                set_is_default_limit(settings.is_default_limit);
             } catch (err: any) {
                 Errors_message.set_message(err.message);
             } finally {
@@ -52,9 +52,11 @@ export const Settings = observer(() => {
 
     const handle_inputs = async (settings: { is_mix_words?: boolean; is_default_limit?: boolean; limit_words?: number }) => {
         if (is_disabled) return;
+        if (total_words <= 1) return Errors_message.set_message('Необходимо не менее двух слов на странице.');
         try {
             const { is_mix_words, is_default_limit, limit_words } = settings;
             set_is_disabled(true);
+
             await API.set_settings(settings);
 
             if (is_mix_words !== undefined) set_is_mix((prev) => !prev);
@@ -63,8 +65,6 @@ export const Settings = observer(() => {
                 set_limit_words(20);
             }
             if (limit_words !== undefined) set_is_default_limit(false);
-
-            // Success_message.set_is_show(true);
         } catch (err: any) {
             Errors_message.set_message(err.message);
         } finally {
@@ -117,7 +117,7 @@ export const Settings = observer(() => {
                             }}
                             onPointerUp={() => handle_inputs({ limit_words })}
                             min='1'
-                            max={max_range}
+                            max={total_words}
                         />
                     </div>
                 </div>

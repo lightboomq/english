@@ -41,8 +41,8 @@ export const API = {
             body: JSON.stringify(obj),
         });
     },
-    get_all_words: (page: number, limit_words: number) => {
-        return request(`${API_URL}/words?page=${page}&limit_words=${limit_words}`, {
+    get_all_words: (current_page: number, limit_words: number) => {
+        return request(`${API_URL}/words?current_page=${current_page}&limit_words=${limit_words}`, {
             method: 'GET',
         });
     },
