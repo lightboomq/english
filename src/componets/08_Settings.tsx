@@ -5,6 +5,7 @@ import Errors_message from '../store/Errors_message.tsx';
 import Success_message from '../store/Success_message.tsx';
 import { API } from '../API.ts';
 import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import s from '../styles/08_settings.module.css';
 
 export const Settings = observer(() => {
@@ -34,6 +35,15 @@ export const Settings = observer(() => {
         get_settings();
     }, []);
 
+    const logout = async () => {
+        try {
+            await API.logout();
+            Success_message.set_is_show(true);
+            navigate('/auth');
+        } catch (err: any) {
+            Errors_message.set_message(err.message);
+        }
+    };
     const remove_all_words = async () => {
         const res = prompt('Для подтверждения введите "Удалить" в поле ниже.');
         if (res !== 'Удалить') return;
@@ -71,6 +81,7 @@ export const Settings = observer(() => {
             set_is_disabled(false);
         }
     };
+
     if (is_loading) {
         return (
             <div className={s.wrapper}>
@@ -98,8 +109,8 @@ export const Settings = observer(() => {
             </div>
 
             <div>
-                <h3 className={s.title_range}>Слов на странице</h3>
-                <div className={s.wrapper_range}>
+                <h3 className={s.title}>Слов на странице</h3>
+                <div className={s.wrapper_item}>
                     <label className={s.wrapper_label}>
                         <input className={s.radio_btn} type='radio' disabled={is_disabled} checked={is_default_limit} onChange={() => handle_inputs({ is_default_limit: true })} />
                         По умолчанию: 20
@@ -123,9 +134,21 @@ export const Settings = observer(() => {
                 </div>
             </div>
 
-            <button className={s.remove_all_words} disabled={is_disabled} onClick={remove_all_words} type='button'>
-                Удалить все слова
-            </button>
+            <div>
+                <h3 className={s.title}>Опасная зона</h3>
+                <div className={s.wrapper_danger}>
+                    <p className={s.danger_text}>Будьте осторожны, эти действия нельзя отменить.</p>
+                    <div className={s.danger_actions}>
+                        <button className={s.logout} onClick={logout} disabled={is_disabled}>
+                            <LogOut size={14} />
+                            <span className={s.logout_text}>Выйти из аккаунта</span>
+                        </button>
+                        <button className={s.remove_all_words} disabled={is_disabled} onClick={remove_all_words} type='button'>
+                            Удалить все слова
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 });

@@ -11,7 +11,7 @@ import reset_word_png from '../assets/reset_word.png';
 import remove_word_png from '../assets/remove_word.png';
 import s from '../styles/04_words.module.css';
 
-interface Words {
+interface Word {
     _id: string;
     en: string;
     ru: string;
@@ -19,10 +19,12 @@ interface Words {
     is_correct_translation?: boolean;
     user_response?: string;
 }
+
 export const Render_words = ({
     word,
     words,
     set_words,
+    total_pages,
     set_total_pages,
     set_total_words,
     current_page,
@@ -30,28 +32,35 @@ export const Render_words = ({
     change_page,
     selected_word_id,
     set_selected_word_id,
+    set_triger_api,
 }) => {
     const [input, set_input] = React.useState<string>('');
-    const render_word = (word: Words) => {
+    const render_word = (word: Word) => {
         if (word.is_correct_translation) return `${word.en} - ${word.ru}`;
         if (word.is_show_translation) return word.ru;
         return word.en;
     };
 
     const show_translation = (id: string) => {
-        set_words((prev) => prev.map((word) => (word._id === id ? { ...word, is_show_translation: !word.is_show_translation } : word)));
+        set_words((prev: Array<Word>) => prev.map((word) => (word._id === id ? { ...word, is_show_translation: !word.is_show_translation } : word)));
+        input_ref_translation.current.focus();
     };
 
     const remove_word = async (id: string) => {
         try {
             await API.remove_word(id);
-            const updated_words = words.filter((word) => String(word._id) !== String(id));
+            const updated_words = words.filter((word: Word) => String(word._id) !== String(id));
 
             if (updated_words.length === 0) {
-                if (current_page - 1 !== 0) change_page(current_page - 1);
-                set_total_pages((prev) => prev - 1);
+                if (current_page === total_pages && current_page > 1) {
+                    change_page(current_page - 1);
+                } else {
+                    set_triger_api((prev: number) => prev + 1); //Костыль на запрос всех слов на текущей странице
+                }
+                set_total_pages((prev: number) => prev - 1);
             }
-            set_total_words((prev) => prev - 1);
+
+            set_total_words((prev: number) => prev - 1);
             set_words(updated_words);
         } catch (err: any) {
             Errors_message.set_message(err.message);
@@ -61,7 +70,7 @@ export const Render_words = ({
     const reset_word = async (id: string) => {
         try {
             await API.reset_word(id);
-            set_words((prev) => prev.map((word) => (word._id === id ? { ...word, is_correct_translation: undefined } : word)));
+            set_words((prev: Array<Word>) => prev.map((word) => (word._id === id ? { ...word, is_correct_translation: undefined } : word)));
             input_ref_translation.current?.focus();
         } catch (err: any) {
             Errors_message.set_message(err.message);

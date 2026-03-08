@@ -108,4 +108,9 @@ export const API = {
             body: JSON.stringify(settings),
         });
     },
+    logout: () => {
+        return request(`${API_URL}/settings`, {
+            method: 'POST',
+        });
+    },
 };

@@ -33,6 +33,7 @@ export const Words = observer(() => {
     const [total_pages, set_total_pages] = React.useState<number>(1);
     const [total_words, set_total_words] = React.useState<number>(0);
     const [limit_words, set_limit_words] = React.useState<number>(DEFAULT_LIMIT);
+    const [trigger_api, set_triger_api] = React.useState<number>(0);
     const navigate = useNavigate();
 
     const [url_page, set_url_page] = useSearchParams();
@@ -46,6 +47,7 @@ export const Words = observer(() => {
         if (!url_page.get('page')) {
             set_url_page({ page: '1' }, { replace: true });
         }
+
         const get_all_words = async () => {
             try {
                 set_is_loading(true);
@@ -71,7 +73,7 @@ export const Words = observer(() => {
             }
         };
         get_all_words();
-    }, [current_page]);
+    }, [current_page, trigger_api]);
 
     const mix_words = (arr: Words[]) => {
         const clone_words = [...arr];
@@ -146,9 +148,9 @@ export const Words = observer(() => {
             </div>
             <Add_word_form
                 words={words}
+                total_words={total_words}
                 set_words={set_words}
                 limit_words={limit_words}
-                total_pages={total_pages}
                 change_page={change_page}
                 current_page={current_page}
                 set_total_words={set_total_words}
@@ -179,9 +181,11 @@ export const Words = observer(() => {
                             key={word._id}
                             word={word}
                             words={words}
+                            total_pages={total_pages}
                             current_page={current_page}
                             change_page={change_page}
                             set_words={set_words}
+                            set_triger_api={set_triger_api}
                             set_total_pages={set_total_pages}
                             set_total_words={set_total_words}
                             input_ref_translation={input_ref_translation}

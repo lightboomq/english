@@ -3,7 +3,7 @@ import s from '../styles/12_add_word_form.module.css';
 import Errors_message from '../store/Errors_message';
 import { API } from '../API';
 
-export const Add_word_form = ({ words, set_words, limit_words, total_pages, change_page, current_page, set_total_words }) => {
+export const Add_word_form = ({ words, set_words, limit_words, total_words, change_page, current_page, set_total_words }) => {
     const [is_disabled, set_is_disabled] = React.useState<boolean>(false);
     const [input_ru, set_input_ru] = React.useState<string>('');
     const [input_en, set_input_en] = React.useState<string>('');
@@ -88,14 +88,12 @@ export const Add_word_form = ({ words, set_words, limit_words, total_pages, chan
             set_is_disabled(true);
             const new_word = await API.add_word({ en, ru });
 
-            if (words.length !== limit_words) {
-                set_words((prev: any[]) => [...prev, new_word]);
+            const last_page = Math.ceil((total_words + 1) / limit_words);
+
+            if (current_page !== last_page) {
+                change_page(last_page);
             } else {
-                if (words.length === limit_words) {
-                    change_page(total_pages);
-                } else {
-                    change_page(current_page + 1);
-                }
+                set_words((prev) => [...prev, new_word]);
             }
             set_input_en('');
             set_input_ru('');
